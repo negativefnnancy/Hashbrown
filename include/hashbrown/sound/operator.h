@@ -15,11 +15,16 @@ typedef struct operator_t {
     size_t n_modulators;
     modulator_t *modulators;
 
+    size_t n_ring_modulators;
+    modulator_t *ring_modulators;
+
     oscillator_t oscillator;
 
 } operator_t;
 
-void operator_init    (operator_t *operator, size_t n_modulators);
+void operator_init    (operator_t *operator,
+                       size_t n_modulators,
+                       size_t n_ring_modulators);
 void operator_deinit  (operator_t *operator);
 void operator_process (operator_t *operator,
                        double outputs[N_OUTPUTS],
