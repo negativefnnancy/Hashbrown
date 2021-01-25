@@ -2,7 +2,8 @@
 #include <string.h>
 #include <math.h>
 
-#include "oscillator.h"
+#include <hashbrown/sound/oscillator.h>
+
 #include "util.h"
 
 void oscillator_init (oscillator_t *oscillator) {

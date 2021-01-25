@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "synth.h"
+#include <hashbrown/sound/synth.h>
 
 void synth_init (synth_t *synth) {
 

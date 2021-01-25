@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "operator.h"
+#include <hashbrown/sound/operator.h>
 
 void operator_init (operator_t *operator, size_t n_modulators) {
 

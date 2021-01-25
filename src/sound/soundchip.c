@@ -1,4 +1,4 @@
-#include "soundchip.h"
+#include <hashbrown/sound/soundchip.h>
 
 void soundchip_init (soundchip_t *soundchip) {
 

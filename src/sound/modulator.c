@@ -1,5 +1,5 @@
-#include "modulator.h"
-#include "operator.h"
+#include <hashbrown/sound/modulator.h>
+#include <hashbrown/sound/operator.h>
 
 void modulator_process (modulator_t *modulator) {
 
