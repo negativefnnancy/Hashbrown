@@ -4,31 +4,38 @@
 
 void synth_init (synth_t *synth) {
 
+    /* TODO: figure out a more elegant way to initialize the particular
+     * configuration of the frequency modulation and ring modulation paths */
+
     size_t i;
 
     for (i = 0; i < N_OPERATORS; i++) {
-
-        /* determine how many modulators this operator has */
-        size_t n_modulators = 1;
-
-        /* every 4 operators form a modulation chain */
-        if (i % 4 == 0)
-            n_modulators++;
-
-        /* initialize the operator with the determined number of modulators */
-        operator_init (&synth->operators[i], n_modulators, 1);
-
-        /* the ring modulator */
-        synth->operators[i].ring_modulators[0].operator
-            = &synth->operators[(i + 2) % N_OPERATORS];
-
-        /* the first modulator */
+        operator_init (&synth->operators[i], 3, 1);
+        synth->operators[i].n_modulators = 1;
+        synth->operators[i].n_ring_modulators = 0;
         synth->operators[i].modulators[0].operator
             = &synth->operators[(i + 1) % N_OPERATORS];
+    }
 
-        if (i % 4 == 0)
-            synth->operators[i].modulators[1].operator
-                = &synth->operators[(i + 4) % N_OPERATORS];
+    for (i = 0; i < N_OPERATORS; i += 4) {
+
+        synth->operators[i].n_modulators = 3;
+
+        /* second and third modulators */
+        synth->operators[i].modulators[1].operator
+            = &synth->operators[i + 2];
+        synth->operators[i].modulators[2].operator
+            = &synth->operators[i + 3];
+
+        /* feedback path */
+        synth->operators[i + 3].n_modulators = 2;
+        synth->operators[i + 3].modulators[1].operator
+            = &synth->operators[i + 3];
+
+        /* ring modulators */
+        synth->operators[(i + 4) % N_OPERATORS].n_ring_modulators = 1;
+        synth->operators[(i + 4) % N_OPERATORS].ring_modulators[0].operator
+            = &synth->operators[i + 3];
     }
 }
 

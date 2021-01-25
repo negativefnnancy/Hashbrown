@@ -3,8 +3,8 @@
 
 typedef struct oscillator_t {
 
-    double output;
     double phase;
+    double output;
 
 } oscillator_t;
 

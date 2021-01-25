@@ -11,6 +11,7 @@ add_library(sound STATIC
     src/sound/modulator.c
     src/sound/operator.c
     src/sound/oscillator.c
+    src/sound/noise.c
     src/sound/soundchip.c
     src/sound/synth.c
 )

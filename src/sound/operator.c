@@ -14,6 +14,7 @@ void operator_init (operator_t *operator,
     operator->ring_modulators
         = calloc (n_ring_modulators, sizeof (modulator_t));
     oscillator_init (&operator->oscillator);
+    noise_generator_init (&operator->noise_generator);
 }
 
 void operator_deinit (operator_t *operator) {
@@ -44,8 +45,21 @@ void operator_process (operator_t *operator,
     }
 
     frequency = operator->frequency + operator->frequency * modulator_sum;
-    oscillator_process (&operator->oscillator, frequency, audio_rate);
-    output = operator->oscillator.output * ring_modulator_product;
+
+    if (operator->noise_mode) {
+
+        noise_generator_process (&operator->noise_generator,
+                                 frequency,
+                                 audio_rate);
+        output = operator->noise_generator.output;
+
+    } else {
+
+        oscillator_process (&operator->oscillator, frequency, audio_rate);
+        output = operator->oscillator.output;
+    }
+
+    output *= ring_modulator_product;
 
     for (i = 0; i < N_OUTPUTS; i++)
         outputs[i] += output * operator->amplitudes[i];

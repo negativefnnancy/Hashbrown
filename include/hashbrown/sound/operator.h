@@ -2,10 +2,12 @@
 #define OPERATOR_H
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "config.h"
 #include "modulator.h"
 #include "oscillator.h"
+#include "noise.h"
 
 typedef struct operator_t {
 
@@ -19,6 +21,9 @@ typedef struct operator_t {
     modulator_t *ring_modulators;
 
     oscillator_t oscillator;
+    noise_generator_t noise_generator;
+
+    bool noise_mode;
 
 } operator_t;
 
