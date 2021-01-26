@@ -86,7 +86,7 @@ void update_synth (synth_t *synth, double time) {
     synth->operators[10].amplitudes[1] = 0.0;
 
     /* noise modulated tone */
-    synth->operators[9].frequency = 110;
+    synth->operators[9].frequency = 220;
     synth->operators[8].modulators[0].modulation_index = envelope_1 * 3.14;
     synth->operators[8].frequency = 440;
     synth->operators[8].amplitudes[0] = 0.5;
