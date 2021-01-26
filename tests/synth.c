@@ -50,40 +50,47 @@ void update_synth (synth_t *synth, double time) {
     frequency_3 = frequency_2 / 2;
 
     /* modulator 1 */
-    synth->operators[1].frequency = frequency_1;
-    synth->operators[0].modulators[0].modulation_index = 0.75;
+/*    synth->operators[1].frequency = frequency_1;
+    synth->operators[0].modulators[0].modulation_index = 0.75; */
 
     /* modulator 2 */
-    synth->operators[2].frequency = frequency_1 * 7;
-    synth->operators[0].modulators[1].modulation_index = envelope_2 * 8;
+/*    synth->operators[2].frequency = frequency_1 * 7;
+    synth->operators[0].modulators[1].modulation_index = envelope_2 * 8;*/
 
     /* carrier */
-    synth->operators[0].frequency = frequency_1;
+/*    synth->operators[0].frequency = frequency_1;
     synth->operators[0].amplitudes[0] = 0.0 * cos (M_PI * 0.25 / 2);
-    synth->operators[0].amplitudes[1] = 0.0 * sin (M_PI * 0.25 / 2);
+    synth->operators[0].amplitudes[1] = 0.0 * sin (M_PI * 0.25 / 2);*/
 
     /* modulator 1 */
-    synth->operators[5].frequency = frequency_2;
-    synth->operators[4].modulators[0].modulation_index = 0.75;
+/*    synth->operators[5].frequency = frequency_2;
+    synth->operators[4].modulators[0].modulation_index = 0.75;*/
 
     /* carrier */
-    synth->operators[4].frequency = frequency_2;
+/*    synth->operators[4].frequency = frequency_2;
     synth->operators[4].amplitudes[0] = 0.0 * cos (M_PI + M_PI * 0.75 / 2);
-    synth->operators[4].amplitudes[1] = 0.0 * sin (M_PI + M_PI * 0.75 / 2);
+    synth->operators[4].amplitudes[1] = 0.0 * sin (M_PI + M_PI * 0.75 / 2); */
 
     /* ring modulator */
-    synth->operators[3].frequency = frequency_2 * ring_multiplier;
+/*    synth->operators[3].frequency = frequency_2 * ring_multiplier;
     synth->operators[4].ring_modulators[0].modulation_index
         = 0.5 * sin (M_PI * time / 2) + 0.5;
     synth->operators[11].frequency = frequency_1 * ring_multiplier;
     synth->operators[0].ring_modulators[0].modulation_index
-        = 0.5 * sin (M_PI * time / 2) + 0.5;
+        = 0.5 * sin (M_PI * time / 2) + 0.5; */
 
     /* noise */
-    synth->operators[10].frequency = 5000 * -cos (M_PI * 2 * time / 8) + 5000;
+    synth->operators[10].frequency = 200;
     synth->operators[10].noise_mode = true;
-    synth->operators[10].amplitudes[0] = 0.2;
-    synth->operators[10].amplitudes[1] = 0.2;
+    synth->operators[10].amplitudes[0] = 0.0;
+    synth->operators[10].amplitudes[1] = 0.0;
+
+    /* noise modulated tone */
+    synth->operators[9].frequency = 110;
+    synth->operators[8].modulators[0].modulation_index = envelope_1 * 3.14;
+    synth->operators[8].frequency = 440;
+    synth->operators[8].amplitudes[0] = 0.5;
+    synth->operators[8].amplitudes[1] = 0.5;
 }
 
 void render_audio (synth_t *synth,
