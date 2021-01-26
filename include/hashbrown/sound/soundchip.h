@@ -13,7 +13,7 @@ typedef struct soundchip_t {
     uint8_t volume_registers[N_OPERATORS];
 
     /* 8 per 4 times 4 bit modulation index channels */
-    uint8_t modulation_registers[N_OPERATORS];
+    uint8_t volume_registers[N_OPERATORS];
 
     /* lower 8 bits of 12 bit period registers */
     uint8_t period_low_registers[N_OPERATORS];
@@ -23,8 +23,9 @@ typedef struct soundchip_t {
 
 } soundchip_t;
 
-void soundchip_init    (soundchip_t *soundchip);
-void soundchip_deinit  (soundchip_t *soundchip);
-void soundchip_process (soundchip_t *soundchip, double audio_rate);
+void soundchip_init            (soundchip_t *soundchip);
+void soundchip_deinit          (soundchip_t *soundchip);
+void soundchip_flush_registers (soundchip_t *soundchip);
+void soundchip_process         (soundchip_t *soundchip, double audio_rate);
 
 #endif /* SOUNDCHIP_H */
