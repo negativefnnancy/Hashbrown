@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include <hashbrown/sound/soundchip.h>
 
 void soundchip_init (soundchip_t *soundchip) {
@@ -17,9 +19,9 @@ void soundchip_flush_registers (soundchip_t *soundchip) {
 
     /* update operator output volumes */
     for (i = 0; i < N_OPERATORS; i++) {
-        uint8_t register = soundchip->volume_registers[i];
-        double left  = (register & 0x0f) / 0x100.0;
-        double right = (register & 0xf0 >> 4) / 0x100.0;
+        uint8_t reg = soundchip->volume_registers[i];
+        double left  = (reg & 0x0f) / (double) 0x100;
+        double right = (reg & 0xf0 >> 4) / (double) 0x100;
         soundchip->synth.operators[i].amplitudes[0] = left;
         soundchip->synth.operators[i].amplitudes[1] = right;
     }
@@ -41,4 +43,8 @@ void soundchip_process (soundchip_t *soundchip, double audio_rate) {
     /* TODO: simulation of external audio filtering */
 
     synth_process (&soundchip->synth, audio_rate);
+
+    memcpy (soundchip->outputs,
+            soundchip->synth.outputs,
+            sizeof (soundchip->outputs));
 }

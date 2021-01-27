@@ -22,5 +22,8 @@ target_link_libraries(sound m)
 
 # tests
 
-add_executable(test_synth tests/synth.c)
+add_executable(test_synth
+    tests/synth.c
+    tests/audio.c
+)
 target_link_libraries(test_synth PUBLIC sound sndfile)
