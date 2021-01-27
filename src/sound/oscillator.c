@@ -13,8 +13,9 @@ void oscillator_init (oscillator_t *oscillator) {
 
 void oscillator_process (oscillator_t *oscillator,
                          double frequency,
+                         double phase,
                          double audio_rate) {
 
-    oscillator->output = sine_lookup (2 * M_PI * oscillator->phase);
+    oscillator->output = sine_lookup (2 * M_PI * (oscillator->phase + phase));
     oscillator->phase += frequency / audio_rate;
 }

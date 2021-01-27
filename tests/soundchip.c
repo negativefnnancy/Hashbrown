@@ -19,17 +19,28 @@ void update_soundchip (soundchip_t *soundchip, double time) {
     double in_sec = time;
     while (in_sec >= 1)
         in_sec -= 1;
-    double ramp = 1 - in_sec * 1;
-    if (ramp < 0)
-        ramp = 0;
+    double ramp = 1 - in_sec * 2;
+    if (ramp < 0.1)
+        ramp = 0.1;
 
     /* update the registers */
-    soundchip_set_frequency  (soundchip, 0, 440);
-    soundchip_set_frequency  (soundchip, 1, 220);
-    soundchip_set_frequency  (soundchip, 2, 440);
-/*    soundchip_set_modulation (soundchip, 0, ramp / 2);*/
-    soundchip_set_modulation (soundchip, 12, time / DURATION);
+    double v = 220 * pow (2, sin (M_PI * 2 * 6 * time) * 0.04);
+    double v2 = 440 * pow (2, sin (M_PI * 2 * 1 * time) * 0.04);
+    soundchip_set_frequency  (soundchip, 0, v);
+    soundchip_set_frequency  (soundchip, 1, v / 2);
+    soundchip_set_frequency  (soundchip, 2, v * 2);
+    soundchip_set_frequency  (soundchip, 4, v * 3);
+    soundchip_set_frequency  (soundchip, 5, v / 2 * 2.5);
+    soundchip_set_frequency  (soundchip, 6, v * 2 * 2.5);
+    soundchip_set_modulation (soundchip, 0, ramp / 2);
+    soundchip_set_modulation (soundchip, 12, time / DURATION / 8);
+    soundchip_set_modulation (soundchip, 4, ramp / 4);
+    soundchip_set_modulation (soundchip, 16, time / DURATION / 4);
     soundchip_set_volume     (soundchip, 0, 0.25, 0.25);
+    soundchip_set_volume     (soundchip, 4, 0.25, 0.25);
+    soundchip->flags_register = 0;
+    soundchip->bitmasks[0] = 0x57;
+    soundchip->bitmasks[1] = 0x3b;
 
     /* tell the soundchip to accept the register values */
     soundchip_flush_registers (soundchip);

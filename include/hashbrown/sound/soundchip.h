@@ -6,8 +6,9 @@
 #include "synth.h"
 
 #define MAX_PERIOD 111861
-
-#define MAX_MODULATION_INDEX (3.1415926535897 * 2)
+#define MAX_MODULATION_INDEX 3.1415926535897
+#define MAX_FEEDBACK 0.5
+#define MAX_RING_MODULATION 1
 
 typedef struct soundchip_t {
 
@@ -24,6 +25,12 @@ typedef struct soundchip_t {
 
     /* upper 4 bits of 12 bit period registers */
     uint8_t period_high_registers[N_OPERATORS / 2];
+
+    /* misc flags register */
+    uint8_t flags_register;
+
+    /* output bitmasks */
+    uint8_t bitmasks[N_OUTPUTS];
 
     /* filtered output */
     double outputs[N_OUTPUTS];

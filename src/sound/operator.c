@@ -27,7 +27,6 @@ void operator_process (operator_t *operator,
                        double audio_rate) {
 
     size_t i;
-    double frequency;
     double modulator_sum = 0;
     double ring_modulator_product = 1;
     double output;
@@ -44,18 +43,19 @@ void operator_process (operator_t *operator,
             * operator->ring_modulators[i].modulation_index;
     }
 
-    frequency = operator->frequency + operator->frequency * modulator_sum;
-
     if (operator->noise_mode) {
 
         noise_generator_process (&operator->noise_generator,
-                                 frequency,
+                                 operator->frequency,
                                  audio_rate);
         output = operator->noise_generator.output;
 
     } else {
 
-        oscillator_process (&operator->oscillator, frequency, audio_rate);
+        oscillator_process (&operator->oscillator,
+                            operator->frequency,
+                            modulator_sum,
+                            audio_rate);
         output = operator->oscillator.output;
     }
 
