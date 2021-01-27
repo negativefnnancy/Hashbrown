@@ -94,17 +94,11 @@ void soundchip_flush_registers (soundchip_t *soundchip) {
         = soundchip->flags_register & 0x01;
 }
 
-void soundchip_process (soundchip_t *soundchip, double audio_rate) {
+void sample_synth (soundchip_t *soundchip, double outputs[N_OUTPUTS]) {
 
     size_t i;
 
-    /* TODO: internal vs external sampling rate */
-    /* TODO: simulation of external audio filtering */
-
-    /* update the state of the internal synthesizer */
-    synth_process (&soundchip->synth, audio_rate);
-
-    /* sample the synth at 8 bits */
+    /* sample the synth at 7 bits per channel */
     for (i = 0; i < N_OUTPUTS; i++) {
 
         double clipped = soundchip->synth.outputs[i];
@@ -112,10 +106,48 @@ void soundchip_process (soundchip_t *soundchip, double audio_rate) {
             clipped = 1;
         else if (clipped < -1)
             clipped = -1;
-        uint8_t sampled = (clipped + 1) / 2 * 255.0;
+        uint8_t sampled = (clipped + 1) / 2 * 127.0;
         uint8_t masked = sampled & soundchip->bitmasks[i];
-        soundchip->outputs[i] = masked / 255.0 * 2 - 1;
+        outputs[i] = masked / 127.0 * 2 - 1;
     }
+}
+
+void soundchip_process (soundchip_t *soundchip, double audio_rate) {
+    
+    /* NOTE: the sampling used here is inaccurate in case that the
+     * simulation rate is less than the chip's clock rate */
+
+    size_t i;
+    double delta_time = 1 / audio_rate;
+
+    /* the chip output state last sample */
+    sample_synth (soundchip, soundchip->outputs);
+
+    /* simulate the soundchip clock rate */
+    while (soundchip->timer <= 0) {
+
+        double outputs[N_OUTPUTS];
+        double weight = (0 - soundchip->timer) / delta_time;
+
+        /* reset the clock */
+        soundchip->timer += 1.0 / OUTPUT_CLOCK_RATE;
+
+        /* update the state of the internal synthesizer */
+        synth_process (&soundchip->synth, OUTPUT_CLOCK_RATE);
+
+        /* the new chip output state */
+        sample_synth (soundchip, outputs);
+
+        /* linear interpolate between last state and current state
+         * depending on how much time has past */
+        for (i = 0; i < N_OUTPUTS; i++)
+            soundchip->outputs[i]
+                += weight * (outputs[i] - soundchip->outputs[i]);
+    }
+    soundchip->timer -= delta_time;
+
+    /* TODO: simulation of external audio filtering */
+
 }
 
 void soundchip_set_frequency (soundchip_t *soundchip,

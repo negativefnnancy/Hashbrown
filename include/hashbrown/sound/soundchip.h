@@ -9,6 +9,7 @@
 #define MAX_MODULATION_INDEX 3.1415926535897
 #define MAX_FEEDBACK 0.5
 #define MAX_RING_MODULATION 1
+#define OUTPUT_CLOCK_RATE 22050
 
 typedef struct soundchip_t {
 
@@ -34,6 +35,9 @@ typedef struct soundchip_t {
 
     /* filtered output */
     double outputs[N_OUTPUTS];
+
+    /* the sampling timer */
+    double timer;
 
 } soundchip_t;
 
