@@ -27,3 +27,9 @@ add_executable(test_synth
     tests/audio.c
 )
 target_link_libraries(test_synth PUBLIC sound sndfile)
+
+add_executable(test_soundchip
+    tests/soundchip.c
+    tests/audio.c
+)
+target_link_libraries(test_soundchip PUBLIC sound sndfile)

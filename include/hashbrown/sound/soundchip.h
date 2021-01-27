@@ -5,6 +5,10 @@
 
 #include "synth.h"
 
+#define MAX_PERIOD 111861
+
+#define MAX_MODULATION_INDEX (3.1415926535897 * 2)
+
 typedef struct soundchip_t {
 
     synth_t synth;
@@ -30,5 +34,18 @@ void soundchip_init            (soundchip_t *soundchip);
 void soundchip_deinit          (soundchip_t *soundchip);
 void soundchip_flush_registers (soundchip_t *soundchip);
 void soundchip_process         (soundchip_t *soundchip, double audio_rate);
+
+void soundchip_set_frequency (soundchip_t *soundchip,
+                              size_t i_operator,
+                              double frequency);
+
+void soundchip_set_volume (soundchip_t *soundchip,
+                           size_t i_operator,
+                           double left,
+                           double right);
+
+void soundchip_set_modulation (soundchip_t *soundchip,
+                               size_t i_modulation_index,
+                               double modulation_index);
 
 #endif /* SOUNDCHIP_H */
