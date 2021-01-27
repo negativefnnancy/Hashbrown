@@ -27,8 +27,8 @@ void update_soundchip (soundchip_t *soundchip, double time) {
     soundchip_set_frequency  (soundchip, 0, 440);
     soundchip_set_frequency  (soundchip, 1, 220);
     soundchip_set_frequency  (soundchip, 2, 440);
-    soundchip_set_modulation (soundchip, 0, ramp);
-    /*soundchip_set_modulation (soundchip, 12, time / DURATION);*/
+/*    soundchip_set_modulation (soundchip, 0, ramp / 2);*/
+    soundchip_set_modulation (soundchip, 12, time / DURATION);
     soundchip_set_volume     (soundchip, 0, 0.25, 0.25);
 
     /* tell the soundchip to accept the register values */

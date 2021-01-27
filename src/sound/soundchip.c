@@ -60,8 +60,9 @@ void soundchip_flush_registers (soundchip_t *soundchip) {
     /* update first chain of modulation indices */
     for (i = 0; i < N_OPERATORS; i++) {
 
-        uint8_t reg = soundchip->modulation_registers[i];
-        double modulation_index = get_low_nibble (reg) * MAX_MODULATION_INDEX;
+        double modulation_index = soundchip->modulation_registers[i]
+                                * MAX_MODULATION_INDEX
+                                / 0xff;
         soundchip->synth.operators[i].modulators[0].modulation_index
             = modulation_index;
     }
@@ -69,14 +70,14 @@ void soundchip_flush_registers (soundchip_t *soundchip) {
     /* update extra chain of modulation indices */
     for (i = 0; i < N_OPERATORS; i += 4) {
 
-        uint8_t reg_1 = soundchip->modulation_registers[i + 0];
-        uint8_t reg_2 = soundchip->modulation_registers[i + 1];
-        uint8_t reg_3 = soundchip->modulation_registers[i + 2];
-        uint8_t reg_4 = soundchip->modulation_registers[i + 3];
-        double modulation_index_1 = get_high_nibble (reg_1) * MAX_MODULATION_INDEX;
-        double modulation_index_2 = get_high_nibble (reg_2) * MAX_MODULATION_INDEX;
-        double modulation_index_3 = get_high_nibble (reg_3) * MAX_MODULATION_INDEX;
-        double modulation_index_4 = get_high_nibble (reg_4) * MAX_MODULATION_INDEX;
+        uint8_t reg_1 = soundchip->modulation_registers[N_OPERATORS + i + 0] & 0x3f;
+        uint8_t reg_2 = soundchip->modulation_registers[N_OPERATORS + i + 1] & 0x3f;
+        uint8_t reg_3 = soundchip->modulation_registers[N_OPERATORS + i + 2] & 0x3f;
+        uint8_t reg_4 = soundchip->modulation_registers[N_OPERATORS + i + 3] & 0x3f;
+        double modulation_index_1 = reg_1 * MAX_MODULATION_INDEX / 0x3f;
+        double modulation_index_2 = reg_2 * MAX_MODULATION_INDEX / 0x3f;
+        double modulation_index_3 = reg_3 * MAX_MODULATION_INDEX / 0x3f;
+        double modulation_index_4 = reg_4 * MAX_MODULATION_INDEX / 0x3f;
         soundchip->synth.operators[i].modulators[1].modulation_index
             = modulation_index_1;
         soundchip->synth.operators[i].modulators[2].modulation_index
@@ -128,14 +129,7 @@ void soundchip_set_modulation (soundchip_t *soundchip,
                                size_t i_modulation_index,
                                double modulation_index) {
 
-    size_t i_register = i_modulation_index % N_OPERATORS;
-    uint8_t value = modulation_index * 0xf;
-    uint8_t reg = soundchip->modulation_registers[i_register];
-    if (i_modulation_index / N_OPERATORS == 0)
-        soundchip->modulation_registers[i_register]
-            = reg & 0xf0 | (value << 0) & 0x0f;
-    else
-        soundchip->modulation_registers[i_register]
-            = reg & 0x0f | (value << 4) & 0xf0;
+    soundchip->modulation_registers[i_modulation_index]
+        = modulation_index * 0x3f;
 }
 

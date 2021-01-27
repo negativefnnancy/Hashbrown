@@ -16,8 +16,8 @@ typedef struct soundchip_t {
     /* 8 bit volume registers, 4 bits per output channel */
     uint8_t volume_registers[N_OPERATORS];
 
-    /* 8 per 4 times 4 bit modulation index channels */
-    uint8_t modulation_registers[N_OPERATORS];
+    /* 8 per 4 operators times 8 bit modulation index channels */
+    uint8_t modulation_registers[N_OPERATORS * 2];
 
     /* lower 8 bits of 12 bit period registers */
     uint8_t period_low_registers[N_OPERATORS];
