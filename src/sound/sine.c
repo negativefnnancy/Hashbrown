@@ -1,8 +1,7 @@
 #include <stdlib.h>
 
 #include <hashbrown/sound/sine.h>
-
-#include "util.h"
+#include <hashbrown/sound/util.h>
 
 const uint8_t sine_table[N_SINE_SAMPLES] = {
     128,

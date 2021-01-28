@@ -3,8 +3,7 @@
 
 #include <hashbrown/sound/oscillator.h>
 #include <hashbrown/sound/sine.h>
-
-#include "util.h"
+#include <hashbrown/sound/util.h>
 
 void oscillator_init (oscillator_t *oscillator) {
 

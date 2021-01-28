@@ -1,4 +1,5 @@
 #include <string.h>
+#include <math.h>
 
 #include <hashbrown/sound/soundchip.h>
 
@@ -101,15 +102,25 @@ void sample_synth (soundchip_t *soundchip, double outputs[N_OUTPUTS]) {
     /* sample the synth at 7 bits per channel */
     for (i = 0; i < N_OUTPUTS; i++) {
 
+        uint8_t sampled, masked;
         double clipped = soundchip->synth.outputs[i];
         if (clipped > 1)
             clipped = 1;
         else if (clipped < -1)
             clipped = -1;
-        uint8_t sampled = (clipped + 1) / 2 * 127.0;
-        uint8_t masked = sampled & soundchip->bitmasks[i];
+        sampled = (clipped + 1) / 2 * 127.0;
+        masked = sampled & soundchip->bitmasks[i];
         outputs[i] = masked / 127.0 * 2 - 1;
     }
+}
+
+double calculate_filter_curve (double target_value,
+                               double current_value,
+                               double delta_time,
+                               double time_constant) {
+
+    return target_value - (target_value - current_value)
+        * exp (-delta_time / time_constant);
 }
 
 void soundchip_process (soundchip_t *soundchip, double audio_rate) {
@@ -121,7 +132,7 @@ void soundchip_process (soundchip_t *soundchip, double audio_rate) {
     double delta_time = 1 / audio_rate;
 
     /* the chip output state last sample */
-    sample_synth (soundchip, soundchip->outputs);
+    sample_synth (soundchip, soundchip->unfiltered_outputs);
 
     /* simulate the soundchip clock rate */
     while (soundchip->timer <= 0) {
@@ -141,13 +152,27 @@ void soundchip_process (soundchip_t *soundchip, double audio_rate) {
         /* linear interpolate between last state and current state
          * depending on how much time has past */
         for (i = 0; i < N_OUTPUTS; i++)
-            soundchip->outputs[i]
-                += weight * (outputs[i] - soundchip->outputs[i]);
+            soundchip->unfiltered_outputs[i]
+                += weight * (outputs[i] - soundchip->unfiltered_outputs[i]);
     }
     soundchip->timer -= delta_time;
 
-    /* TODO: simulation of external audio filtering */
+    /* simulate high pass filter capacitor */
+    for (i = 0; i < N_OUTPUTS; i++)
+        soundchip->filtered_outputs[i]
+            = calculate_filter_curve (soundchip->unfiltered_outputs[i],
+                                      soundchip->filtered_outputs[i],
+                                      delta_time,
+                                      HIGH_PASS_TIME_CONSTANT);
 
+    /* simulate low pass filter capacitor */
+    for (i = 0; i < N_OUTPUTS; i++)
+        soundchip->outputs[i]
+            = calculate_filter_curve (soundchip->unfiltered_outputs[i]
+                                      - soundchip->filtered_outputs[i],
+                                      soundchip->outputs[i],
+                                      delta_time,
+                                      LOW_PASS_TIME_CONSTANT);
 }
 
 void soundchip_set_frequency (soundchip_t *soundchip,

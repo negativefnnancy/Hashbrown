@@ -4,12 +4,17 @@
 #include <stdint.h>
 
 #include "synth.h"
+#include "util.h"
 
 #define MAX_PERIOD 111861
-#define MAX_MODULATION_INDEX 3.1415926535897
+#define MAX_MODULATION_INDEX M_PI
 #define MAX_FEEDBACK 0.5
 #define MAX_RING_MODULATION 1
 #define OUTPUT_CLOCK_RATE 22050
+#define HIGH_PASS_CUTOFF 20
+#define LOW_PASS_CUTOFF 5000
+#define HIGH_PASS_TIME_CONSTANT (1 / (2 * M_PI * HIGH_PASS_CUTOFF))
+#define LOW_PASS_TIME_CONSTANT (1 / (2 * M_PI * LOW_PASS_CUTOFF))
 
 typedef struct soundchip_t {
 
@@ -33,11 +38,17 @@ typedef struct soundchip_t {
     /* output bitmasks */
     uint8_t bitmasks[N_OUTPUTS];
 
-    /* filtered output */
-    double outputs[N_OUTPUTS];
-
     /* the sampling timer */
     double timer;
+
+    /* unfiltered output */
+    double unfiltered_outputs[N_OUTPUTS];
+
+    /* intermediate filtered output */
+    double filtered_outputs[N_OUTPUTS];
+
+    /* final filtered output */
+    double outputs[N_OUTPUTS];
 
 } soundchip_t;
 
