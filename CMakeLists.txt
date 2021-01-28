@@ -5,6 +5,8 @@ add_compile_options(-Wall -Wextra -pedantic -Wno-unused-parameter)
 
 project(Hashbrown VERSION 0.0.1)
 
+
+
 # sound module
 
 add_library(sound STATIC
@@ -20,16 +22,30 @@ add_library(sound STATIC
 target_include_directories(sound PUBLIC include)
 target_link_libraries(sound m)
 
+
+
+# music module
+
+add_library(music STATIC
+    src/music/module.c
+)
+
+target_include_directories(music PUBLIC include)
+
+
+
 # tests
 
 add_executable(test_synth
-    tests/synth.c
-    tests/audio.c
+    src/tests/synth.c
+    src/tests/audio.c
 )
+
 target_link_libraries(test_synth PUBLIC sound sndfile)
 
 add_executable(test_soundchip
-    tests/soundchip.c
-    tests/audio.c
+    src/tests/soundchip.c
+    src/tests/audio.c
 )
+
 target_link_libraries(test_soundchip PUBLIC sound sndfile)
