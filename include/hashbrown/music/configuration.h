@@ -26,4 +26,6 @@ typedef struct configuration_t {
 
 } configuration_t;
 
+void configuration_init (configuration_t *configuration);
+
 #endif /* CONFIGURATION_H */

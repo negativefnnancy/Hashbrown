@@ -10,4 +10,7 @@ typedef struct pattern_t {
 
 } pattern_t;
 
+void pattern_init   (pattern_t *pattern, size_t n_rows);
+void pattern_deinit (pattern_t *pattern);
+
 #endif /* PATTERN_H */

@@ -86,6 +86,9 @@ int main (int argc, char **argv) {
                                  N_OUTPUTS,
                                  AUDIO_RATE);
 
+    /* clean up the soundchip */
+    soundchip_deinit (&soundchip);
+
     /* free the audio buffer */
     free (buffer);
 

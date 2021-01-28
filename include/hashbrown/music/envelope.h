@@ -34,7 +34,7 @@ typedef struct envelope_t {
 
 void envelope_init   (envelope_t *envelope,
                       size_t n_samples,
-                      envelope_loop_mode loop_mode);
+                      envelope_loop_mode_t loop_mode);
 void envelope_deinit (envelope_t *envelope);
 
 #endif /* ENVELOPE_H */

@@ -4,6 +4,7 @@
 #include "channel.h"
 #include "pattern.h"
 #include "envelope.h"
+#include "configuration.h"
 
 #define MAX_TITLE_LENGTH 64
 #define MAX_COMPOSER_LENGTH 64

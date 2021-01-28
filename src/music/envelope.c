@@ -5,7 +5,7 @@
 
 void envelope_init (envelope_t *envelope,
                     size_t n_samples,
-                    envelope_loop_mode loop_mode) {
+                    envelope_loop_mode_t loop_mode) {
 
     memset (envelope, 0, sizeof (envelope_t));
     envelope->samples = calloc (n_samples, sizeof (envelope_sample_t));

@@ -122,6 +122,9 @@ int main (int argc, char **argv) {
                                  N_OUTPUTS,
                                  AUDIO_RATE);
 
+    /* cleanup the synth */
+    synth_deinit (&synth);
+
     /* free the audio buffer */
     free (buffer);
 
