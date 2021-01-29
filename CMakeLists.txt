@@ -31,6 +31,7 @@ add_library(music STATIC
     src/music/player.c
     src/music/configuration.c
     src/music/envelope.c
+    src/music/envelope_generator.c
     src/music/module.c
     src/music/pattern.c
     src/music/row.c

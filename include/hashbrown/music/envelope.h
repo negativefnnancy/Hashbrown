@@ -14,9 +14,8 @@ typedef enum envelope_loop_mode_t {
 
     LOOP_MODE_NONE,
     LOOP_MODE_NORMAL,
-    LOOP_MODE_PING_PONG,
 
-    N_LOOP_MODE
+    N_LOOP_MODES
 
 } envelope_loop_mode_t;
 

@@ -5,20 +5,22 @@
 
 #include <hashbrown/sound/config.h>
 
-#define N_CONTROLS (N_OPERATORS * 4)
+typedef struct configuration_control_t {
+
+    size_t i_channel;
+    size_t i_envelope;
+    double multiplier;
+
+} configuration_control_t;
 
 typedef struct configuration_t {
 
     uint8_t bitmasks[N_OUTPUTS];
     uint8_t flags;
 
-    struct {
-       
-        size_t i_channel;
-        size_t i_envelope;
-        double multiplier;
-
-    } controls[N_CONTROLS];
+    configuration_control_t volume[N_OPERATORS];
+    configuration_control_t frequency[N_OPERATORS];
+    configuration_control_t modulation[N_OPERATORS * 2];
 
     double tempo; /* bpm */
     unsigned int rows_per_beat;

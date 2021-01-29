@@ -172,7 +172,8 @@ void soundchip_process (soundchip_t *soundchip, double audio_rate) {
                                       - soundchip->filtered_outputs[i],
                                       soundchip->outputs[i],
                                       delta_time,
-                                      LOW_PASS_TIME_CONSTANT);
+                                      LOW_PASS_TIME_CONSTANT)
+            * SOUNDCHIP_GAIN;
 }
 
 void soundchip_set_frequency (soundchip_t *soundchip,

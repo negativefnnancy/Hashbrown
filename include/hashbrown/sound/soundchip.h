@@ -15,6 +15,7 @@
 #define LOW_PASS_CUTOFF 5000
 #define HIGH_PASS_TIME_CONSTANT (1 / (2 * M_PI * HIGH_PASS_CUTOFF))
 #define LOW_PASS_TIME_CONSTANT (1 / (2 * M_PI * LOW_PASS_CUTOFF))
+#define SOUNDCHIP_GAIN 0.5
 
 typedef struct soundchip_t {
 
