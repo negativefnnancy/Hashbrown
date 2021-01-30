@@ -34,4 +34,33 @@ void module_deinit (module_t *module) {
     free (module->channels);
     free (module->patterns);
     free (module->envelopes);
+
+    /* TODO figure out how to do complete deinit */
+}
+
+void module_init_empty (module_t *module) {
+
+    module_init (module,
+                 "n00 s0ng",
+                 "some1 kewl",
+                 "kewlest song ever",
+                 4,
+                 4,
+                 1);
+
+    /* TODO */
+}
+
+int module_load (module_t *module, char *path) {
+
+    /* TODO */
+
+    return -1; /* failure....... */
+}
+
+int module_save (module_t *module, char *path) {
+
+    /* TODO */
+
+    return -1; /* failure....... */
 }

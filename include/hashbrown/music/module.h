@@ -30,13 +30,16 @@ typedef struct module_t {
 
 } module_t;
 
-void module_init    (module_t *module,
-                     char *title,
-                     char *composer,
-                     char *description,
-                     size_t n_channels,
-                     size_t n_patterns,
-                     size_t n_envelopes);
-void module_deinit  (module_t *module);
+void module_init       (module_t *module,
+                        char *title,
+                        char *composer,
+                        char *description,
+                        size_t n_channels,
+                        size_t n_patterns,
+                        size_t n_envelopes);
+void module_deinit     (module_t *module);
+void module_init_empty (module_t *module);
+int module_load        (module_t *module, char *path);
+int module_save        (module_t *module, char *path);
 
 #endif /* MODULE_H */

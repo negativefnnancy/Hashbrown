@@ -7,6 +7,15 @@ project(Hashbrown VERSION 0.0.1)
 
 
 
+# dependencies
+
+include(FindPkgConfig)
+
+pkg_search_module(SDL2 REQUIRED sdl2)
+pkg_search_module(SDL2TTF REQUIRED SDL2_ttf)
+
+
+
 # sound module
 
 add_library(sound STATIC
@@ -38,6 +47,29 @@ add_library(music STATIC
 )
 
 target_include_directories(music PUBLIC include)
+
+
+
+# tracker app
+
+add_executable(hashbrown_tracker
+    src/tracker/main.c
+    src/tracker/interface.c
+)
+
+target_link_libraries(hashbrown_tracker PUBLIC sound music sndfile)
+
+add_custom_command(TARGET hashbrown_tracker PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/res/tracker/ $<TARGET_FILE_DIR:hashbrown_tracker>)
+
+target_include_directories(hashbrown_tracker PRIVATE
+    ${SDL2_INCLUDE_DIRS}
+    ${SDL2TTF_INCLUDE_DIRS})
+
+target_link_libraries(hashbrown_tracker PRIVATE
+    ${SDL2_LIBRARIES}
+    ${SDL2TTF_LIBRARIES})
 
 
 
