@@ -60,6 +60,24 @@ int interface_deinit (interface_t *interface) {
     return EXIT_SUCCESS;
 }
 
+void interface_draw (interface_t *interface) {
+
+    SDL_Surface *surface;
+
+    /* the window surface */
+    surface = SDL_GetWindowSurface (interface->window);
+
+    Uint32 black = SDL_MapRGB (surface->format, 32, 32, 32);
+
+    /* TODO: everything */
+
+    /* draw the background */
+    SDL_FillRect (surface, NULL, black);
+
+    /* present the image to the screen */
+    SDL_UpdateWindowSurface (interface->window);
+}
+
 int interface_run (interface_t *interface) {
 
     SDL_Event event;
@@ -70,12 +88,32 @@ int interface_run (interface_t *interface) {
 
         switch (event.type) {
 
+            case SDL_WINDOWEVENT:
+
+                switch (event.window.event) {
+
+                    case SDL_WINDOWEVENT_SHOWN:
+                        interface_draw (interface);
+                        break;
+
+                    case SDL_WINDOWEVENT_EXPOSED:
+                        /* TODO only redraw damaged regions */
+                        interface_draw (interface);
+                        break;
+
+                    case SDL_WINDOWEVENT_SIZE_CHANGED:
+                        interface_draw (interface);
+                        break;
+                }
+
+                break;
+
             case SDL_KEYDOWN:
 
                 switch (event.key.keysym.sym) {
 
                     case SDLK_ESCAPE:
-                        return;
+                        return EXIT_SUCCESS;
 
                     case SDLK_F5:
                         break;
