@@ -6,4 +6,5 @@ void ui_element_draw (ui_element_t *element,
                       region_t clipping_region,
                       region_t element_region) {
 
+    element->method_draw (element, interface, clipping_region, element_region);
 }

@@ -61,6 +61,8 @@ add_executable(hashbrown_tracker
     src/tracker/vector.c
     src/tracker/util.c
     src/tracker/ui/element.c
+    src/tracker/ui/box.c
+    src/tracker/ui/dummy.c
 )
 
 target_link_libraries(hashbrown_tracker PUBLIC sound music sndfile)

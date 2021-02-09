@@ -1,8 +1,22 @@
-#ifndef THEME_H
-#define THEME_H
+#ifndef UI_BOX_H
+#define UI_BOX_H
 
-typedef struct theme_t {
+#include "element.h"
 
-} theme_t;
+struct ui_box_t;
 
-#endif /* THEME_H */
+typedef void ui_box_draw_method_t (struct ui_box_t *element,
+                                   struct interface_t *interface,
+                                   region_t clipping_region,
+                                   region_t element_region);
+
+typedef struct ui_box_t {
+
+    ui_element base;
+    ui_box_draw_method_t *method_draw;
+
+} ui_box_t;
+
+ui_box_draw_method_t ui_box_draw;
+
+#endif /* UI_BOX_H */
