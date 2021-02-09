@@ -17,6 +17,9 @@ typedef struct ui_element_t {
 
 } ui_element_t;
 
+void ui_element_init (ui_element_t *element,
+                      ui_element_draw_method_t *method_draw);
+
 ui_element_draw_method_t ui_element_draw;
 
 #endif /* UI_ELEMENT_H */

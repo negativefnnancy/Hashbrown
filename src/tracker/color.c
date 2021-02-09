@@ -33,3 +33,12 @@ color_t color_multiply (color_t a, color_t b) {
     double blue  = a.blue  * b.blue;
     return color_make (red, green, blue);
 }
+
+void sdl_renderer_set_color (SDL_Renderer *renderer, color_t color) {
+
+    SDL_SetRenderDrawColor (renderer,
+                            color.red * 255,
+                            color.green * 255,
+                            color.blue * 255,
+                            255);
+}

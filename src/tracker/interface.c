@@ -3,6 +3,21 @@
 #include <string.h>
 
 #include "interface.h"
+#include "ui/dummy.h"
+
+void interface_construct (interface_t *interface) {
+
+    if (interface->root)
+        ui_dummy_destroy ((ui_dummy_t *) interface->root);
+
+    interface->root = (ui_element_t *) ui_dummy_create (color_make (0, 1, 0));
+}
+
+void interface_set_theme (interface_t *interface, theme_t theme) {
+
+    interface->theme = theme;
+    interface_construct (interface);
+}
 
 int interface_update_window_region (interface_t *interface) {
 
@@ -86,6 +101,7 @@ int interface_init (interface_t *interface, module_t *module) {
     }
 
     interface_update_window_region (interface);
+    interface_construct (interface);
 
     return EXIT_SUCCESS;
 }

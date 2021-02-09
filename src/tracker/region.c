@@ -45,6 +45,21 @@ region_t region_bounds (region_t a, region_t b) {
     return region_from_corners (top_left_bounds, bottom_right_bounds);
 }
 
+region_t region_intersection (region_t a, region_t b) {
+
+    vec2_t top_left_a,      bottom_right_a;
+    vec2_t top_left_b,      bottom_right_b;
+    vec2_t top_left_bounds, bottom_right_bounds;
+    
+    region_get_corners (a, &top_left_a, &bottom_right_a);
+    region_get_corners (b, &top_left_b, &bottom_right_b);
+
+    top_left_bounds     = vec2_max (top_left_a,     top_left_b);
+    bottom_right_bounds = vec2_min (bottom_right_a, bottom_right_b);
+
+    return region_from_corners (top_left_bounds, bottom_right_bounds);
+}
+
 SDL_Rect sdl_rect_from_region (region_t region) {
 
     SDL_Rect rect;

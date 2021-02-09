@@ -12,6 +12,13 @@ void ui_element_draw_method_box (ui_element_t *element,
                  element_region);
 }
 
+void ui_box_init (ui_box_t *element,
+                  ui_box_draw_method_t *method_draw) {
+
+    ui_element_init ((ui_element_t *) element, ui_element_draw_method_box);
+    element->method_draw = method_draw;
+}
+
 void ui_box_draw (ui_box_t *element,
                   interface_t *interface,
                   region_t clipping_region,

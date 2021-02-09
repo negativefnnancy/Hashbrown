@@ -18,7 +18,8 @@ region_t region_from_corners (vec2_t top_left, vec2_t bottom_right);
 
 void region_get_corners (region_t region, vec2_t *top_left, vec2_t *bottom_right);
 
-region_t region_bounds (region_t a, region_t b);
+region_t region_bounds       (region_t a, region_t b);
+region_t region_intersection (region_t a, region_t b);
 
 SDL_Rect sdl_rect_from_region (region_t region);
 

@@ -12,10 +12,13 @@ typedef void ui_box_draw_method_t (struct ui_box_t *element,
 
 typedef struct ui_box_t {
 
-    ui_element base;
+    ui_element_t base;
     ui_box_draw_method_t *method_draw;
 
 } ui_box_t;
+
+void ui_box_init (ui_box_t *element,
+                  ui_box_draw_method_t *method_draw);
 
 ui_box_draw_method_t ui_box_draw;
 
