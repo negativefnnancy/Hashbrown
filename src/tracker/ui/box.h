@@ -2,6 +2,7 @@
 #define UI_BOX_H
 
 #include "element.h"
+#include "box_style.h"
 
 struct ui_box_t;
 
@@ -14,11 +15,13 @@ typedef struct ui_box_t {
 
     ui_element_t base;
     ui_box_draw_method_t *method_draw;
+    ui_box_style_t style;
 
 } ui_box_t;
 
 void ui_box_init (ui_box_t *element,
-                  ui_box_draw_method_t *method_draw);
+                  ui_box_draw_method_t *method_draw,
+                  ui_box_style_t style);
 
 ui_box_draw_method_t ui_box_draw;
 

@@ -60,6 +60,18 @@ region_t region_intersection (region_t a, region_t b) {
     return region_from_corners (top_left_bounds, bottom_right_bounds);
 }
 
+region_t region_inset (region_t region, double amount) {
+
+    vec2_t top_left_outer, bottom_right_outer;
+    vec2_t top_left_inner, bottom_right_inner;
+
+    region_get_corners (region, &top_left_outer, &bottom_right_outer);
+    top_left_inner     = vec2_add_scalar      (top_left_outer, amount);
+    bottom_right_inner = vec2_subtract_scalar (bottom_right_outer, amount);
+
+    return region_from_corners (top_left_inner, bottom_right_inner);
+}
+
 SDL_Rect sdl_rect_from_region (region_t region) {
 
     SDL_Rect rect;
@@ -67,5 +79,10 @@ SDL_Rect sdl_rect_from_region (region_t region) {
     rect.y = region.position.y;
     rect.w = region.dimensions.x;
     rect.h = region.dimensions.y;
+    /* TODO temp? */
+    if (rect.w < 0)
+        rect.w = 0;
+    if (rect.h < 0)
+        rect.h = 0;
     return rect;
 }

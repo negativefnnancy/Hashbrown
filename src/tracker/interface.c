@@ -7,10 +7,15 @@
 
 void interface_construct (interface_t *interface) {
 
+    ui_box_style_t style;
+
     if (interface->root)
         ui_dummy_destroy ((ui_dummy_t *) interface->root);
 
-    interface->root = (ui_element_t *) ui_dummy_create (color_make (0, 1, 0));
+    style = ui_box_style_make (4, 4, 4, color_make (1, 0, 0), color_make (0, 1, 0), color_make (0, 0, 1));
+
+    interface->root = (ui_element_t *) ui_dummy_create (color_make (1, 1, 1),
+                                                        style);
 }
 
 void interface_set_theme (interface_t *interface, theme_t theme) {

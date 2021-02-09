@@ -62,6 +62,7 @@ add_executable(hashbrown_tracker
     src/tracker/util.c
     src/tracker/ui/element.c
     src/tracker/ui/box.c
+    src/tracker/ui/box_style.c
     src/tracker/ui/dummy.c
 )
 

@@ -30,6 +30,16 @@ vec2_t vec2_divide (vec2_t a, vec2_t b) {
     return vec2_make (a.x / b.x, a.y / b.y);
 }
 
+vec2_t vec2_add_scalar (vec2_t vector, double scalar) {
+
+    return vec2_make (vector.x + scalar, vector.y + scalar);
+}
+
+vec2_t vec2_subtract_scalar (vec2_t vector, double scalar) {
+
+    return vec2_make (vector.x - scalar, vector.y - scalar);
+}
+
 vec2_t vec2_multiply_scalar (vec2_t vector, double scalar) {
 
     return vec2_make (vector.x * scalar, vector.y * scalar);
@@ -57,10 +67,10 @@ double vec2_dot_product (vec2_t a, vec2_t b) {
 
 vec2_t vec2_min (vec2_t a, vec2_t b) {
 
-    return vec2_make (fmin (a.x, b.x), fmin (a.x, b.y));
+    return vec2_make (fmin (a.x, b.x), fmin (a.y, b.y));
 }
 
 vec2_t vec2_max (vec2_t a, vec2_t b) {
 
-    return vec2_make (fmax (a.x, b.x), fmax (a.x, b.y));
+    return vec2_make (fmax (a.x, b.x), fmax (a.y, b.y));
 }

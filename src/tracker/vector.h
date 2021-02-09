@@ -15,6 +15,8 @@ vec2_t vec2_subtract (vec2_t a, vec2_t b);
 vec2_t vec2_multiply (vec2_t a, vec2_t b);
 vec2_t vec2_divide   (vec2_t a, vec2_t b);
 
+vec2_t vec2_add_scalar      (vec2_t vector, double scalar);
+vec2_t vec2_subtract_scalar (vec2_t vector, double scalar);
 vec2_t vec2_multiply_scalar (vec2_t vector, double scalar);
 vec2_t vec2_divide_scalar   (vec2_t vector, double scalar);
 

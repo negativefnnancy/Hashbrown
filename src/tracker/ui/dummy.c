@@ -14,9 +14,9 @@ void ui_box_draw_method_dummy (ui_box_t *element,
                    element_region);
 }
 
-void ui_dummy_init (ui_dummy_t *element, color_t color) {
+void ui_dummy_init (ui_dummy_t *element, color_t color, ui_box_style_t style) {
 
-    ui_box_init ((ui_box_t *) element, ui_box_draw_method_dummy);
+    ui_box_init ((ui_box_t *) element, ui_box_draw_method_dummy, style);
     element->color = color;
 }
 
@@ -35,10 +35,10 @@ void ui_dummy_draw (ui_dummy_t *element,
     SDL_RenderFillRect (interface->renderer, &rect);
 }
 
-ui_dummy_t *ui_dummy_create (color_t color) {
+ui_dummy_t *ui_dummy_create (color_t color, ui_box_style_t style) {
 
     ui_dummy_t *element = malloc (sizeof (ui_dummy_t));
-    ui_dummy_init (element, color);
+    ui_dummy_init (element, color, style);
     return element;
 }
 
