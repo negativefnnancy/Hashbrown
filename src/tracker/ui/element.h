@@ -1,8 +1,19 @@
-#ifndef THEME_H
-#define THEME_H
+#ifndef UI_ELEMENT_H
+#define UI_ELEMENT_H
 
-typedef struct theme_t {
+#include "../region.h"
 
-} theme_t;
+struct interface_t;
 
-#endif /* THEME_H */
+typedef struct ui_element_t {
+
+    int tmp;
+
+} ui_element_t;
+
+void ui_element_draw (ui_element_t *element,
+                      struct interface_t *interface,
+                      region_t clipping_region,
+                      region_t element_region);
+
+#endif /* UI_ELEMENT_H */

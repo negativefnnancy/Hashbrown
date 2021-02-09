@@ -4,10 +4,39 @@
 
 #include "interface.h"
 
+int interface_update_window_region (interface_t *interface) {
+
+    int width, height;
+
+    SDL_GetWindowSize (interface->window, &width, &height);
+
+    interface->window_region.position   = vec2_make (0, 0);
+    interface->window_region.dimensions = vec2_make (width, height);
+
+    /* recreate the framebuffer texture */
+    if (interface->framebuffer)
+        SDL_DestroyTexture (interface->framebuffer);
+
+    if ((interface->framebuffer
+                = SDL_CreateTexture (interface->renderer,
+                                     SDL_GetWindowPixelFormat (interface->window),
+                                     SDL_TEXTUREACCESS_TARGET,
+                                     width,
+                                     height))
+            == NULL) {
+
+        fprintf (stderr, "Could not create texture: %s\n", SDL_GetError ());
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+
 int interface_init (interface_t *interface, module_t *module) {
 
     memset (interface, 0, sizeof (interface_t));
     interface->module = module;
+    interface->running = true;
 
     /* initialize SDL */
     if (SDL_Init (SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
@@ -56,14 +85,17 @@ int interface_init (interface_t *interface, module_t *module) {
         return EXIT_FAILURE;
     }
 
+    interface_update_window_region (interface);
+
     return EXIT_SUCCESS;
 }
  
 int interface_deinit (interface_t *interface) {
 
     /* clean up SDL */
+    SDL_DestroyTexture  (interface->framebuffer);
     SDL_DestroyRenderer (interface->renderer);
-    SDL_DestroyWindow (interface->window);
+    SDL_DestroyWindow   (interface->window);
     SDL_Quit ();
 
     /* clean up fonts */
@@ -73,24 +105,45 @@ int interface_deinit (interface_t *interface) {
     return EXIT_SUCCESS;
 }
 
-void interface_draw (interface_t *interface) {
+void interface_render (interface_t *interface) {
 
-    /* clear the screen */
-    SDL_RenderClear (interface->renderer);
+    /* set the render target to the framebuffer texture */
+    SDL_SetRenderTarget (interface->renderer, interface->framebuffer);
 
-    /* TODO: everything */
+    /* repaint requested region of the screen */
+    ui_element_draw (interface->root,
+                     interface,
+                     interface->repaint_region,
+                     interface->window_region);
+
+    /* clear the repaint region */
+    interface->repaint_region = region_make (0, 0, 0, 0);
 
     /* present the image to the screen */
-    SDL_RenderPresent (interface->renderer);
+    SDL_SetRenderTarget (interface->renderer, NULL);
+    SDL_RenderClear     (interface->renderer);
+    SDL_RenderCopy      (interface->renderer, interface->framebuffer, NULL, NULL);
+    SDL_RenderPresent   (interface->renderer);
 }
 
-int interface_run (interface_t *interface) {
+void interface_repaint (interface_t *interface, region_t region) {
+
+    /* TODO: instead of consolodating here,
+     * queue them all up and consolodate at render time
+     * for performance ??? */
+
+    /* here we queue up a repaint request for the given region */
+
+    /* consolodate this request with existing requests */
+    interface->repaint_region = region_bounds (interface->repaint_region,
+                                               region);
+}
+
+int interface_process (interface_t *interface) {
 
     SDL_Event event;
 
-    while (SDL_WaitEvent (&event)) {
-
-        SDL_PumpEvents ();
+    while (SDL_PollEvent (&event)) {
 
         switch (event.type) {
 
@@ -99,16 +152,17 @@ int interface_run (interface_t *interface) {
                 switch (event.window.event) {
 
                     case SDL_WINDOWEVENT_SHOWN:
-                        interface_draw (interface);
+                        interface_repaint (interface, interface->window_region);
                         break;
 
                     case SDL_WINDOWEVENT_EXPOSED:
                         /* TODO only redraw damaged regions */
-                        interface_draw (interface);
+                        interface_repaint (interface, interface->window_region);
                         break;
 
                     case SDL_WINDOWEVENT_SIZE_CHANGED:
-                        interface_draw (interface);
+                        interface_update_window_region (interface);
+                        interface_repaint (interface, interface->window_region);
                         break;
                 }
 
@@ -119,6 +173,7 @@ int interface_run (interface_t *interface) {
                 switch (event.key.keysym.sym) {
 
                     case SDLK_ESCAPE:
+                        interface->running = false;
                         return EXIT_SUCCESS;
 
                     case SDLK_F5:
@@ -186,12 +241,8 @@ int interface_run (interface_t *interface) {
             case SDL_MOUSEBUTTONDOWN:
                 break;
 
-            case SDL_WINDOWEVENT_SHOWN:
-            case SDL_WINDOWEVENT_EXPOSED:
-            case SDL_WINDOWEVENT_RESIZED:
-                break;
-
             case SDL_QUIT:
+                interface->running = false;
                 return EXIT_SUCCESS;
 
             default:
@@ -200,6 +251,19 @@ int interface_run (interface_t *interface) {
     }
 
     return EXIT_SUCCESS;
+}
+
+int interface_run (interface_t *interface) {
+
+    int code = EXIT_SUCCESS;
+
+    while (interface->running) {
+
+        interface_render (interface);
+        code = interface_process (interface);
+    }
+
+    return code;
 }
 
 int interface_launch (module_t *module) {
