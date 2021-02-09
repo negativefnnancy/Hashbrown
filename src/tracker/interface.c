@@ -37,10 +37,22 @@ int interface_init (interface_t *interface, module_t *module) {
                                                SDL_WINDOWPOS_UNDEFINED,
                                                DEFAULT_SCREEN_WIDTH,
                                                DEFAULT_SCREEN_HEIGHT,
-                                               SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE))
+                                               SDL_WINDOW_SHOWN |
+                                               SDL_WINDOW_RESIZABLE))
             == NULL) {
 
         fprintf (stderr, "Could not create SDL window: %s\n", SDL_GetError ());
+        return EXIT_FAILURE;
+    }
+
+    /* create the renderer */
+    if ((interface->renderer = SDL_CreateRenderer (interface->window,
+                                                   -1,
+                                                   SDL_RENDERER_ACCELERATED |
+                                                   SDL_RENDERER_PRESENTVSYNC))
+            == NULL) {
+
+        fprintf (stderr, "Could not create SDL renderer: %s\n", SDL_GetError ());
         return EXIT_FAILURE;
     }
 
@@ -50,6 +62,7 @@ int interface_init (interface_t *interface, module_t *module) {
 int interface_deinit (interface_t *interface) {
 
     /* clean up SDL */
+    SDL_DestroyRenderer (interface->renderer);
     SDL_DestroyWindow (interface->window);
     SDL_Quit ();
 
@@ -62,20 +75,13 @@ int interface_deinit (interface_t *interface) {
 
 void interface_draw (interface_t *interface) {
 
-    SDL_Surface *surface;
-
-    /* the window surface */
-    surface = SDL_GetWindowSurface (interface->window);
-
-    Uint32 black = SDL_MapRGB (surface->format, 32, 32, 32);
+    /* clear the screen */
+    SDL_RenderClear (interface->renderer);
 
     /* TODO: everything */
 
-    /* draw the background */
-    SDL_FillRect (surface, NULL, black);
-
     /* present the image to the screen */
-    SDL_UpdateWindowSurface (interface->window);
+    SDL_RenderPresent (interface->renderer);
 }
 
 int interface_run (interface_t *interface) {

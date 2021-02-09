@@ -55,6 +55,9 @@ target_include_directories(music PUBLIC include)
 add_executable(hashbrown_tracker
     src/tracker/main.c
     src/tracker/interface.c
+    src/tracker/color.c
+    src/tracker/theme.c
+    src/tracker/util.c
 )
 
 target_link_libraries(hashbrown_tracker PUBLIC sound music sndfile)
