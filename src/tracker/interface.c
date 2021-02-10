@@ -5,34 +5,112 @@
 #include "interface.h"
 #include "ui/dummy.h"
 #include "ui/container.h"
+#include "ui/layout_split.h"
 
 void interface_construct (interface_t *interface) {
 
-    ui_box_style_t style;
+    ui_box_style_t style_1, style_2, style_3;
 
     if (interface->root) {
 
-        ui_container_destroy ((ui_container_t *) interface->root);
+        /* TODO */
+/*        ui_container_destroy ((ui_container_t *) interface->root);
         ui_dummy_destroy     (interface->dummy_1);
         ui_dummy_destroy     (interface->dummy_2);
-        ui_dummy_destroy     (interface->dummy_3);
+        ui_dummy_destroy     (interface->dummy_3);*/
     }
 
-    style = ui_box_style_make (4, 4, 4, color_make (1, 0, 0), color_make (0, 1, 0), color_make (0, 0, 1));
+    style_1 = ui_box_style_make (0,
+                                 0,
+                                 interface->theme.spacing, 
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[0]);
+    style_2 = ui_box_style_make (0,
+                                 1,
+                                 0, 
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[2],
+                                 interface->theme.colors[0]);
+    style_3 = ui_box_style_make (0,
+                                 0,
+                                 0,
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[0]);
 
-    interface->layout = (ui_layout_t *) ui_layout_split_create (SPLIT_ORIENTATION_HORIZONTAL,
-                                                                8,
-                                                                interface->lengths);
-    interface->dummy_1 = ui_dummy_create (color_make (1, 0.5, 0.5), style);
-    interface->dummy_2 = ui_dummy_create (color_make (0.5, 1, 0.5), style);
-    interface->dummy_3 = ui_dummy_create (color_make (0.5, 0.5, 1), style);
-    interface->children[0] = (ui_element_t *) interface->dummy_1;
-    interface->children[1] = (ui_element_t *) interface->dummy_2;
-    interface->children[2] = (ui_element_t *) interface->dummy_3;
-    interface->lengths[0] = 100;
-    interface->lengths[1] = 75;
-    interface->lengths[2] = 0;
-    interface->root = (ui_element_t *) ui_container_create (style, interface->layout, 3, interface->children);
+    interface->ui.view_configuration = ui_dummy_create (interface->theme.colors[0], style_2);
+    interface->ui.view_pattern       = ui_dummy_create (interface->theme.colors[0], style_2);
+    interface->ui.view_metadata      = ui_dummy_create (interface->theme.colors[0], style_2);
+    interface->ui.view_envelope      = ui_dummy_create (interface->theme.colors[0], style_2);
+
+    interface->ui.button_save   = ui_dummy_create (interface->theme.colors[2], style_2);
+    interface->ui.button_load   = ui_dummy_create (interface->theme.colors[2], style_2);
+    interface->ui.button_render = ui_dummy_create (interface->theme.colors[2], style_2);
+
+    interface->ui.layout_1
+        = (ui_layout_t *) ui_layout_split_create (SPLIT_ORIENTATION_VERTICAL,
+                                                  interface->theme.spacing,
+                                                  interface->ui.lengths_1);
+    interface->ui.layout_2
+        = (ui_layout_t *) ui_layout_split_create (SPLIT_ORIENTATION_HORIZONTAL,
+                                                  interface->theme.spacing,
+                                                  interface->ui.lengths_2);
+    interface->ui.layout_3
+        = (ui_layout_t *) ui_layout_split_create (SPLIT_ORIENTATION_VERTICAL,
+                                                  interface->theme.spacing,
+                                                  interface->ui.lengths_3);
+    interface->ui.layout_4
+        = (ui_layout_t *) ui_layout_split_create (SPLIT_ORIENTATION_HORIZONTAL,
+                                                  interface->theme.spacing,
+                                                  interface->ui.lengths_4);
+
+    interface->ui.pane_1 = ui_container_create (style_1,
+                                                interface->ui.layout_1,
+                                                2,
+                                                interface->ui.children_1);
+    interface->ui.pane_2 = ui_container_create (style_3,
+                                                interface->ui.layout_2,
+                                                2,
+                                                interface->ui.children_2);
+    interface->ui.pane_3 = ui_container_create (style_3,
+                                                interface->ui.layout_3,
+                                                3,
+                                                interface->ui.children_3);
+    interface->ui.pane_4 = ui_container_create (style_3,
+                                                interface->ui.layout_4,
+                                                3,
+                                                interface->ui.children_4);
+
+    interface->ui.lengths_1[0] = 128;
+    interface->ui.lengths_1[1] = 0;
+
+    interface->ui.lengths_2[0] = 0;
+    interface->ui.lengths_2[1] = 128;
+
+    interface->ui.lengths_3[0] = 128;
+    interface->ui.lengths_3[1] = 0;
+    interface->ui.lengths_3[2] = 24;
+
+    interface->ui.lengths_4[0] = 38;
+    interface->ui.lengths_4[1] = 38;
+    interface->ui.lengths_4[2] = 0;
+
+    interface->ui.children_1[0] = (ui_element_t *) interface->ui.view_configuration;
+    interface->ui.children_1[1] = (ui_element_t *) interface->ui.pane_2;
+
+    interface->ui.children_2[0] = (ui_element_t *) interface->ui.view_pattern;
+    interface->ui.children_2[1] = (ui_element_t *) interface->ui.pane_3;
+
+    interface->ui.children_3[0] = (ui_element_t *) interface->ui.view_metadata;
+    interface->ui.children_3[1] = (ui_element_t *) interface->ui.view_envelope;
+    interface->ui.children_3[2] = (ui_element_t *) interface->ui.pane_4;
+
+    interface->ui.children_4[0] = (ui_element_t *) interface->ui.button_save;
+    interface->ui.children_4[1] = (ui_element_t *) interface->ui.button_load;
+    interface->ui.children_4[2] = (ui_element_t *) interface->ui.button_render;
+
+    interface->root = (ui_element_t *) interface->ui.pane_1;
 }
 
 void interface_set_theme (interface_t *interface, theme_t theme) {
@@ -123,7 +201,7 @@ int interface_init (interface_t *interface, module_t *module) {
     }
 
     interface_update_window_region (interface);
-    interface_construct (interface);
+    interface_set_theme (interface, default_theme);
 
     return EXIT_SUCCESS;
 }

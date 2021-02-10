@@ -8,7 +8,7 @@
 typedef struct theme_t {
 
     color_t colors[N_THEME_COLORS];
-    /* TODO sizes n stuff maybe */
+    double spacing;
 
 } theme_t;
  

@@ -45,7 +45,8 @@ int ui_layout_split_iterator_iterate (ui_layout_iterator_t *iterator,
 
     /* calculate total explicit space */
     for (i = 0; i < iterator->n_elements; i++)
-        sum += layout->lengths[i];
+        sum += layout->lengths[i] + layout->spacing;
+    sum -= layout->spacing;
     
     /* calculate remaining space */
     switch (layout->orientation) {
@@ -64,7 +65,7 @@ int ui_layout_split_iterator_iterate (ui_layout_iterator_t *iterator,
 
     /* find this position */
     for (i = 0; i < iterator->i_element; i++)
-        x += get_length (layout->lengths[i], remaining);
+        x += get_length (layout->lengths[i], remaining) + layout->spacing;
 
     /* get the length */
     length = get_length (layout->lengths[iterator->i_element], remaining);

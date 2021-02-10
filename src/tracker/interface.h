@@ -32,12 +32,38 @@ typedef struct interface_t {
     bool running;             /* whether the interface is still running */
 
     /* all the ui elements */
-    ui_element_t *children[3];
-    ui_dummy_t *dummy_1;
-    ui_dummy_t *dummy_2;
-    ui_dummy_t *dummy_3;
-    ui_layout_t *layout;
-    double lengths[3];
+    struct {
+
+        ui_container_t *pane_1;
+        ui_container_t *pane_2;
+        ui_container_t *pane_3;
+        ui_container_t *pane_4;
+
+        ui_layout_t *layout_1;
+        ui_layout_t *layout_2;
+        ui_layout_t *layout_3;
+        ui_layout_t *layout_4;
+
+        ui_element_t *children_1[2];
+        ui_element_t *children_2[2];
+        ui_element_t *children_3[3];
+        ui_element_t *children_4[3];
+
+        double lengths_1[2];
+        double lengths_2[2];
+        double lengths_3[3];
+        double lengths_4[3];
+
+        ui_dummy_t *view_configuration;
+        ui_dummy_t *view_pattern;
+        ui_dummy_t *view_metadata;
+        ui_dummy_t *view_envelope;
+
+        ui_dummy_t *button_save;
+        ui_dummy_t *button_load;
+        ui_dummy_t *button_render;
+
+    } ui;
 
 } interface_t;
 
