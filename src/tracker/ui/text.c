@@ -14,6 +14,17 @@ void ui_box_draw_method_text (ui_box_t *element,
                   element_region);
 }
 
+void ui_box_event_method_text (ui_box_t *element,
+                               interface_t *interface,
+                               ui_event_t event,
+                               region_t element_region) {
+
+    ui_text_event ((ui_text_t *) element,
+                   interface,
+                   event,
+                   element_region);
+}
+
 void ui_text_init (ui_text_t *element,
                    ui_box_style_t style,
                    color_t color_foreground,
@@ -21,7 +32,10 @@ void ui_text_init (ui_text_t *element,
                    char *text,
                    text_alignment_t alignment) {
 
-    ui_box_init ((ui_box_t *) element, ui_box_draw_method_text, style);
+    ui_box_init ((ui_box_t *) element,
+                 ui_box_draw_method_text,
+                 ui_box_event_method_text,
+                 style);
     element->color_foreground = color_foreground;
     element->color_background = color_background;
     element->text             = text;

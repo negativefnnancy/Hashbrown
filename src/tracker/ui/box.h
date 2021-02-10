@@ -13,7 +13,7 @@ typedef void ui_box_draw_method_t (struct ui_box_t *element,
 
 typedef void ui_box_event_method_t (struct ui_box_t *element,
                                     struct interface_t *interface,
-                                    event_t event,
+                                    ui_event_t event,
                                     region_t element_region);
 
 typedef struct ui_box_t {

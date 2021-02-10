@@ -305,10 +305,10 @@ int interface_process (interface_t *interface) {
 
                     default:
                         {
-                            ui_event_t event
+                            ui_event_t ui_event
                                 = ui_event_make_keyboard (event.key.keysym.sym,
                                                           event.key.state == SDL_PRESSED);
-                            ui_element_event (interface->root, interface, event, interface->window_region);
+                            ui_element_event (interface->root, interface, ui_event, interface->window_region);
                         }
                         break;
                 }
@@ -325,12 +325,12 @@ int interface_process (interface_t *interface) {
                 {
                     int x, y;
                     SDL_GetMouseState (&x, &y);
-                    ui_event_t event
+                    ui_event_t ui_event
                         = ui_event_make_mouse (EVENT_MOUSE_BUTTON,
                                                vec2_make (x, y),
                                                event.button.button,
                                                event.button.state == SDL_PRESSED);
-                    ui_element_event (interface->root, interface, event, interface->window_region);
+                    ui_element_event (interface->root, interface, ui_event, interface->window_region);
                 }
                 break;
 

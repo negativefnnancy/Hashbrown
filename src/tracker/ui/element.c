@@ -2,8 +2,8 @@
 #include "../interface.h"
 
 void ui_element_init (ui_element_t *element,
-                      ui_element_event_method_t *method_event,
-                      ui_element_draw_method_t *method_draw) {
+                      ui_element_draw_method_t *method_draw,
+                      ui_element_event_method_t *method_event) {
 
     element->method_draw  = method_draw;
     element->method_event = method_event;
