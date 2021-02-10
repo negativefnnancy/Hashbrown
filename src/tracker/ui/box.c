@@ -30,6 +30,7 @@ void ui_box_draw (ui_box_t *element,
                   region_t element_region) {
 
     region_t margin_region, border_region, padding_region, content_region;
+    region_t intersection;
 
     /* calculate the inner regions */
     margin_region  = element_region;
@@ -47,5 +48,6 @@ void ui_box_draw (ui_box_t *element,
     draw_box (interface->renderer, clipping_region, padding_region, content_region, element->style.color_padding);
 
     /* draw the content */
-    element->method_draw (element, interface, clipping_region, content_region);
+    intersection = region_intersection (content_region, clipping_region);
+    element->method_draw (element, interface, intersection, content_region);
 }

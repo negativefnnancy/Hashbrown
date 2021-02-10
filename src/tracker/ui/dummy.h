@@ -19,6 +19,6 @@ void ui_dummy_draw (ui_dummy_t *element,
                     region_t element_region);
 
 ui_dummy_t *ui_dummy_create  (color_t color, ui_box_style_t style);
-void        ui_dummy_destroy (ui_dummy_t *dummy);
+void        ui_dummy_destroy (ui_dummy_t *element);
 
 #endif /* UI_DUMMY_H */

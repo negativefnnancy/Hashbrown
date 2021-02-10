@@ -42,7 +42,7 @@ ui_dummy_t *ui_dummy_create (color_t color, ui_box_style_t style) {
     return element;
 }
 
-void ui_dummy_destroy (ui_dummy_t *dummy) {
+void ui_dummy_destroy (ui_dummy_t *element) {
 
-    free (dummy);
+    free (element);
 }

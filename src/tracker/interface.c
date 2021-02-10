@@ -4,18 +4,35 @@
 
 #include "interface.h"
 #include "ui/dummy.h"
+#include "ui/container.h"
 
 void interface_construct (interface_t *interface) {
 
     ui_box_style_t style;
 
-    if (interface->root)
-        ui_dummy_destroy ((ui_dummy_t *) interface->root);
+    if (interface->root) {
+
+        ui_container_destroy ((ui_container_t *) interface->root);
+        ui_dummy_destroy     (interface->dummy_1);
+        ui_dummy_destroy     (interface->dummy_2);
+        ui_dummy_destroy     (interface->dummy_3);
+    }
 
     style = ui_box_style_make (4, 4, 4, color_make (1, 0, 0), color_make (0, 1, 0), color_make (0, 0, 1));
 
-    interface->root = (ui_element_t *) ui_dummy_create (color_make (1, 1, 1),
-                                                        style);
+    interface->layout = (ui_layout_t *) ui_layout_split_create (SPLIT_ORIENTATION_HORIZONTAL,
+                                                                8,
+                                                                interface->lengths);
+    interface->dummy_1 = ui_dummy_create (color_make (1, 0.5, 0.5), style);
+    interface->dummy_2 = ui_dummy_create (color_make (0.5, 1, 0.5), style);
+    interface->dummy_3 = ui_dummy_create (color_make (0.5, 0.5, 1), style);
+    interface->children[0] = (ui_element_t *) interface->dummy_1;
+    interface->children[1] = (ui_element_t *) interface->dummy_2;
+    interface->children[2] = (ui_element_t *) interface->dummy_3;
+    interface->lengths[0] = 100;
+    interface->lengths[1] = 75;
+    interface->lengths[2] = 0;
+    interface->root = (ui_element_t *) ui_container_create (style, interface->layout, 3, interface->children);
 }
 
 void interface_set_theme (interface_t *interface, theme_t theme) {

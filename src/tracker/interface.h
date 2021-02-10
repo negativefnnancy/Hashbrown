@@ -8,9 +8,12 @@
 
 #include <hashbrown/music/module.h>
 
-#include "ui/element.h"
 #include "theme.h"
 #include "region.h"
+#include "ui/element.h"
+#include "ui/dummy.h"
+#include "ui/container.h"
+#include "ui/layout_split.h"
 
 #define DEFAULT_SCREEN_WIDTH 640
 #define DEFAULT_SCREEN_HEIGHT 480
@@ -27,6 +30,14 @@ typedef struct interface_t {
     region_t repaint_region;  /* the region of the window to redraw on vsync */
     ui_element_t *root;       /* the ui element at the root of the window */
     bool running;             /* whether the interface is still running */
+
+    /* all the ui elements */
+    ui_element_t *children[3];
+    ui_dummy_t *dummy_1;
+    ui_dummy_t *dummy_2;
+    ui_dummy_t *dummy_3;
+    ui_layout_t *layout;
+    double lengths[3];
 
 } interface_t;
 
