@@ -115,6 +115,10 @@ void ui_container_event (ui_container_t *element,
 
             switch (event.event.mouse.type) {
 
+                /* ignore click events because we generate our own */
+                case EVENT_MOUSE_CLICK:
+                    return;
+
                 /* on mouse move, find the hovered child */
                 case EVENT_MOUSE_MOVE:
 
@@ -136,13 +140,30 @@ void ui_container_event (ui_container_t *element,
             }
 
             /* send mouse events to the hovered child */
-            if (element->hovered)
+            if (element->hovered) {
+
+                region_t hovered_region
+                    = ui_container_child_region (element,
+                                                 element_region,
+                                                 element->hovered);
+
                 ui_element_event (element->hovered,
                                   interface,
                                   event,
-                                  ui_container_child_region (element,
-                                                             element_region,
-                                                             element->hovered));
+                                  hovered_region);
+
+                /* generate mouse click events on mouse up on selected child */
+                if (event.event.mouse.type == EVENT_MOUSE_BUTTON &&
+                    event.event.mouse.pressed == false &&
+                    element->selected == element->hovered) {
+
+                    event.event.mouse.type = EVENT_MOUSE_CLICK;
+                    ui_element_event (element->hovered,
+                                      interface,
+                                      event,
+                                      hovered_region);
+                }
+            }
             break;
 
         case EVENT_KEYBOARD:

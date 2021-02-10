@@ -55,11 +55,28 @@ void ui_dummy_event (ui_dummy_t *element,
                      ui_event_t event,
                      region_t element_region) {
 
-    /* TODO */
     switch (event.type) {
 
         case EVENT_MOUSE:
-            puts ("mouse event");
+
+            switch (event.event.mouse.type) {
+
+                case EVENT_MOUSE_CLICK:
+                    puts ("mouse click event");
+                    break;
+
+                case EVENT_MOUSE_BUTTON:
+                    puts ("mouse button event");
+                    break;
+
+                case EVENT_MOUSE_MOVE:
+                    puts ("mouse move event");
+                    break;
+
+                default:
+                    break;
+            }
+
             break;
 
         case EVENT_KEYBOARD:

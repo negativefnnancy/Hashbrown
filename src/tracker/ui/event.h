@@ -17,6 +17,7 @@ typedef enum ui_event_type_t {
 
 typedef enum ui_mouse_event_type_t {
 
+    EVENT_MOUSE_CLICK,
     EVENT_MOUSE_BUTTON,
     EVENT_MOUSE_MOVE,
 
