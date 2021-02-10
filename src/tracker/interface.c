@@ -3,9 +3,7 @@
 #include <string.h>
 
 #include "interface.h"
-#include "ui/dummy.h"
-#include "ui/container.h"
-#include "ui/layout_split.h"
+#include "ui/event.h"
 
 void interface_construct (interface_t *interface) {
 
@@ -44,9 +42,21 @@ void interface_construct (interface_t *interface) {
     interface->ui.view_metadata      = ui_dummy_create (interface->theme.colors[0], style_2);
     interface->ui.view_envelope      = ui_dummy_create (interface->theme.colors[0], style_2);
 
-    interface->ui.button_save   = ui_dummy_create (interface->theme.colors[2], style_2);
-    interface->ui.button_load   = ui_dummy_create (interface->theme.colors[2], style_2);
-    interface->ui.button_render = ui_dummy_create (interface->theme.colors[2], style_2);
+    interface->ui.button_save   = ui_text_create (style_2,
+                                                  interface->theme.colors[0],
+                                                  interface->theme.colors[2],
+                                                  "save",
+                                                  TEXT_ALIGNMENT_CENTER);
+    interface->ui.button_load   = ui_text_create (style_2,
+                                                  interface->theme.colors[0],
+                                                  interface->theme.colors[2],
+                                                  "load",
+                                                  TEXT_ALIGNMENT_CENTER);
+    interface->ui.button_render = ui_text_create (style_2,
+                                                  interface->theme.colors[0],
+                                                  interface->theme.colors[2],
+                                                  "render",
+                                                  TEXT_ALIGNMENT_CENTER);
 
     interface->ui.layout_1
         = (ui_layout_t *) ui_layout_split_create (SPLIT_ORIENTATION_VERTICAL,
@@ -285,6 +295,7 @@ int interface_process (interface_t *interface) {
                 break;
 
             case SDL_KEYDOWN:
+            case SDL_KEYUP:
 
                 switch (event.key.keysym.sym) {
 
@@ -292,69 +303,35 @@ int interface_process (interface_t *interface) {
                         interface->running = false;
                         return EXIT_SUCCESS;
 
-                    case SDLK_F5:
-                        break;
-
-                    case SDLK_F6:
-                        break;
-
-                    case SDLK_F7:
-                        break;
-
-                    case SDLK_c:
-                        break;
-
-                    case SDLK_v:
-                        break;
-
-                    case SDLK_UP:
-                        break;
-
-                    case SDLK_DOWN:
-                        break;
-
-                    case SDLK_LEFT:
-                        break;
-
-                    case SDLK_RIGHT:
-                        break;
-
-                    case SDLK_BACKSPACE:
-                        break;
-
-                    case SDLK_DELETE:
-                        break;
-
-                    case SDLK_0:
-                    case SDLK_1:
-                    case SDLK_2:
-                    case SDLK_3:
-                    case SDLK_4:
-                    case SDLK_5:
-                    case SDLK_6:
-                    case SDLK_7:
-                    case SDLK_8:
-                    case SDLK_9:
-                    case SDLK_EQUALS:
-                        break;
-
-                    case SDLK_RETURN:
-                    case SDLK_KP_ENTER:
-                        break;
-
-                    case SDLK_CAPSLOCK:
+                    default:
+                        {
+                            ui_event_t event
+                                = ui_event_make_keyboard (event.key.keysym.sym,
+                                                          event.key.state == SDL_PRESSED);
+                            ui_element_event (interface->root, interface, event, interface->window_region);
+                        }
                         break;
                 }
 
                 break;
 
             case SDL_TEXTINPUT:
+                /* TODO */
                 break;
 
             case SDL_MOUSEMOTION:
-                break;
-
             case SDL_MOUSEBUTTONDOWN:
+            case SDL_MOUSEBUTTONUP:
+                {
+                    int x, y;
+                    SDL_GetMouseState (&x, &y);
+                    ui_event_t event
+                        = ui_event_make_mouse (EVENT_MOUSE_BUTTON,
+                                               vec2_make (x, y),
+                                               event.button.button,
+                                               event.button.state == SDL_PRESSED);
+                    ui_element_event (interface->root, interface, event, interface->window_region);
+                }
                 break;
 
             case SDL_QUIT:

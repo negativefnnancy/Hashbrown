@@ -26,6 +26,11 @@ void ui_container_draw (ui_container_t *element,
                         region_t clipping_region,
                         region_t element_region);
 
+void ui_container_event (ui_container_t *element,
+                         struct interface_t *interface,
+                         ui_event_t event,
+                         region_t element_region);
+
 ui_container_t *ui_container_create  (ui_box_style_t style,
                                       ui_layout_t *layout,
                                       size_t n_children,

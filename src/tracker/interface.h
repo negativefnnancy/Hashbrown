@@ -13,6 +13,7 @@
 #include "ui/element.h"
 #include "ui/dummy.h"
 #include "ui/container.h"
+#include "ui/text.h"
 #include "ui/layout_split.h"
 
 #define DEFAULT_SCREEN_WIDTH 640
@@ -59,9 +60,9 @@ typedef struct interface_t {
         ui_dummy_t *view_metadata;
         ui_dummy_t *view_envelope;
 
-        ui_dummy_t *button_save;
-        ui_dummy_t *button_load;
-        ui_dummy_t *button_render;
+        ui_text_t *button_save;
+        ui_text_t *button_load;
+        ui_text_t *button_render;
 
     } ui;
 

@@ -14,14 +14,28 @@ void ui_box_draw_method_dummy (ui_box_t *element,
                    element_region);
 }
 
+void ui_box_event_method_dummy (ui_box_t *element,
+                                interface_t *interface,
+                                ui_event_t event,
+                                region_t element_region) {
+
+    ui_dummy_event ((ui_dummy_t *) element,
+                    interface,
+                    event,
+                    element_region);
+}
+
 void ui_dummy_init (ui_dummy_t *element, color_t color, ui_box_style_t style) {
 
-    ui_box_init ((ui_box_t *) element, ui_box_draw_method_dummy, style);
+    ui_box_init ((ui_box_t *) element,
+                 ui_box_draw_method_dummy,
+                 ui_box_event_method_dummy,
+                 style);
     element->color = color;
 }
 
 void ui_dummy_draw (ui_dummy_t *element,
-                    struct interface_t *interface,
+                    interface_t *interface,
                     region_t clipping_region,
                     region_t element_region) {
 
@@ -33,6 +47,14 @@ void ui_dummy_draw (ui_dummy_t *element,
 
     sdl_renderer_set_color (interface->renderer, element->color);
     SDL_RenderFillRect (interface->renderer, &rect);
+}
+
+void ui_dummy_event (ui_dummy_t *element,
+                     interface_t *interface,
+                     ui_event_t event,
+                     region_t element_region) {
+
+    /* TODO */
 }
 
 ui_dummy_t *ui_dummy_create (color_t color, ui_box_style_t style) {

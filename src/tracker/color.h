@@ -20,4 +20,6 @@ color_t color_multiply (color_t a, color_t b);
 
 void sdl_renderer_set_color (SDL_Renderer *renderer, color_t color);
 
+SDL_Color sdl_color_from_color (color_t color);
+
 #endif /* COLOR_H */

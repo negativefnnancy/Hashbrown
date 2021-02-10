@@ -27,7 +27,7 @@ void ui_container_init (ui_container_t *element,
 }
 
 void ui_container_draw (ui_container_t *element,
-                        struct interface_t *interface,
+                        interface_t *interface,
                         region_t clipping_region,
                         region_t element_region) {
 
@@ -43,6 +43,26 @@ void ui_container_draw (ui_container_t *element,
 
     while (ui_layout_iterator_iterate (&iterator, &child, &child_region))
         ui_element_draw (child, interface, clipping_region, child_region);
+}
+
+void ui_container_event (ui_container_t *element,
+                         interface_t *interface,
+                         ui_event_t event,
+                         region_t element_region) {
+
+    ui_element_t *child;
+    region_t child_region;
+    ui_layout_iterator_t iterator;
+
+    ui_layout_iterator_init (&iterator,
+                             element->layout,
+                             element->n_children,
+                             element->children,
+                             element_region);
+
+    while (ui_layout_iterator_iterate (&iterator, &child, &child_region))
+        /* TODO only send it if the event occurs in this child */
+        ui_element_event (child, interface, event, child_region);
 }
 
 ui_container_t *ui_container_create (ui_box_style_t style,

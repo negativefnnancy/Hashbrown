@@ -18,6 +18,11 @@ void ui_dummy_draw (ui_dummy_t *element,
                     region_t clipping_region,
                     region_t element_region);
 
+void ui_dummy_event (ui_dummy_t *element,
+                     struct interface_t *interface,
+                     ui_event_t event,
+                     region_t element_region);
+
 ui_dummy_t *ui_dummy_create  (color_t color, ui_box_style_t style);
 void        ui_dummy_destroy (ui_dummy_t *element);
 
