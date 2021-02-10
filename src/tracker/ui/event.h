@@ -6,9 +6,6 @@
 #include "../vector.h"
 #include "../region.h"
 
-struct interface_t;
-struct ui_element_t;
-
 typedef enum ui_event_type_t {
 
     EVENT_MOUSE,
@@ -58,11 +55,5 @@ ui_event_t ui_event_make_mouse (ui_mouse_event_type_t type,
                                 int button,
                                 bool pressed);
 ui_event_t ui_event_make_keyboard (int key, bool pressed);
-
-void ui_event_propagate (ui_event_t event,
-                         struct interface_t *interface,
-                         struct ui_element_t *element,
-                         region_t parent_region,
-                         region_t child_region);
 
 #endif /* UI_EVENT_H */

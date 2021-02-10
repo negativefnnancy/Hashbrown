@@ -82,13 +82,6 @@ void ui_box_event (ui_box_t *element,
            + element->style.size_padding;
     content_region = region_inset (element_region, offset);
 
-    /* shift mouse event position */
-    if (event.type == EVENT_MOUSE) {
-
-        event.event.mouse.position 
-            = vec2_subtract_scalar (event.event.mouse.position, offset);
-    }
-
     /* handle the event */
     element->method_event (element, interface, event, content_region);
 }
