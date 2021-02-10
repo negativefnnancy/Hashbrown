@@ -12,6 +12,8 @@ typedef struct ui_container_t {
     ui_layout_t *layout;
     size_t n_children;
     ui_element_t **children;
+    ui_element_t *hovered;
+    ui_element_t *selected;
 
 } ui_container_t;
 

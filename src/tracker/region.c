@@ -60,6 +60,16 @@ region_t region_intersection (region_t a, region_t b) {
     return region_from_corners (top_left_bounds, bottom_right_bounds);
 }
 
+bool region_contains_point (region_t region, vec2_t point) {
+
+    vec2_t top_left, bottom_right;
+
+    region_get_corners (region, &top_left, &bottom_right);
+
+    return point.x >= top_left.x && point.x < bottom_right.x &&
+           point.y >= top_left.y && point.y < bottom_right.y;
+}
+
 region_t region_inset (region_t region, double amount) {
 
     vec2_t top_left_outer, bottom_right_outer;

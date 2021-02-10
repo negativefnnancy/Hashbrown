@@ -324,8 +324,9 @@ int interface_process (interface_t *interface) {
             case SDL_MOUSEBUTTONUP:
                 {
                     int x, y;
+                    ui_event_t ui_event;
                     SDL_GetMouseState (&x, &y);
-                    ui_event_t ui_event
+                    ui_event
                         = ui_event_make_mouse (EVENT_MOUSE_BUTTON,
                                                vec2_make (x, y),
                                                event.button.button,

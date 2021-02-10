@@ -1,6 +1,8 @@
 #ifndef REGION_H
 #define REGION_H
 
+#include <stdbool.h>
+
 #include <SDL2/SDL.h>
 
 #include "vector.h"
@@ -20,6 +22,8 @@ void region_get_corners (region_t region, vec2_t *top_left, vec2_t *bottom_right
 
 region_t region_bounds       (region_t a, region_t b);
 region_t region_intersection (region_t a, region_t b);
+
+bool region_contains_point (region_t region, vec2_t point);
 
 region_t region_inset (region_t region, double amount);
 
