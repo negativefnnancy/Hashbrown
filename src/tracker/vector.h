@@ -20,8 +20,9 @@ vec2_t vec2_subtract_scalar (vec2_t vector, double scalar);
 vec2_t vec2_multiply_scalar (vec2_t vector, double scalar);
 vec2_t vec2_divide_scalar   (vec2_t vector, double scalar);
 
-double vec2_length (vec2_t vector);
-vec2_t vec2_unit   (vec2_t vector);
+double vec2_length   (vec2_t vector);
+double vec2_distance (vec2_t a, vec2_t b);
+vec2_t vec2_unit     (vec2_t vector);
 
 double vec2_dot_product (vec2_t a, vec2_t b);
 

@@ -137,24 +137,26 @@ void ui_container_event (ui_container_t *element,
 
             /* send mouse events to the hovered child */
             if (element->hovered)
-                ui_element_event (element->hovered,
-                                  interface,
-                                  event,
-                                  ui_container_child_region (element,
-                                                             element_region,
-                                                             element->hovered));
+                ui_event_propagate (event,
+                                    interface,
+                                    element->hovered,
+                                    element_region,
+                                    ui_container_child_region (element,
+                                                               element_region,
+                                                               element->hovered));
             break;
 
         case EVENT_KEYBOARD:
 
             /* send keyboard events to the selected child */
             if (element->selected)
-                ui_element_event (element->selected,
-                                  interface,
-                                  event,
-                                  ui_container_child_region (element,
-                                                             element_region,
-                                                             element->selected));
+                ui_event_propagate (event,
+                                    interface,
+                                    element->selected,
+                                    element_region,
+                                    ui_container_child_region (element,
+                                                               element_region,
+                                                               element->selected));
             break;
 
         default:

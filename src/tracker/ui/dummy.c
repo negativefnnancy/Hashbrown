@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "dummy.h"
 #include "../interface.h"
@@ -55,6 +56,19 @@ void ui_dummy_event (ui_dummy_t *element,
                      region_t element_region) {
 
     /* TODO */
+    switch (event.type) {
+
+        case EVENT_MOUSE:
+            puts ("mouse event");
+            break;
+
+        case EVENT_KEYBOARD:
+            puts ("keyboard event");
+            break;
+
+        default:
+            break;
+    }
 }
 
 ui_dummy_t *ui_dummy_create (color_t color, ui_box_style_t style) {

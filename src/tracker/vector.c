@@ -55,6 +55,11 @@ double vec2_length (vec2_t vector) {
     return sqrt (vector.x * vector.x + vector.y * vector.y);
 }
 
+double vec2_distance (vec2_t a, vec2_t b) {
+
+    return vec2_length (vec2_subtract (a, b));
+}
+
 vec2_t vec2_unit (vec2_t vector) {
 
     return vec2_divide_scalar (vector, vec2_length (vector));
