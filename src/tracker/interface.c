@@ -7,7 +7,7 @@
 
 void interface_construct (interface_t *interface) {
 
-    ui_box_style_t style_1, style_2, style_3;
+    ui_box_style_t style_1, style_2, style_3, style_4, style_5, style_6;
 
     if (interface->root) {
 
@@ -36,27 +36,88 @@ void interface_construct (interface_t *interface) {
                                  interface->theme.colors[0],
                                  interface->theme.colors[0],
                                  interface->theme.colors[0]);
+    style_4 = ui_box_style_make (0,
+                                 0,
+                                 0,
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[0]);
+    style_5 = ui_box_style_make (0,
+                                 1,
+                                 0,
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[2],
+                                 interface->theme.colors[0]);
+    style_6 = ui_box_style_make (0,
+                                 1,
+                                 2,
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[2],
+                                 interface->theme.colors[0]);
 
-    interface->ui.view_configuration = ui_dummy_create (interface->theme.colors[0], style_2);
-    interface->ui.view_pattern       = ui_dummy_create (interface->theme.colors[0], style_2);
-    interface->ui.view_metadata      = ui_dummy_create (interface->theme.colors[0], style_2);
-    interface->ui.view_envelope      = ui_dummy_create (interface->theme.colors[0], style_2);
-
-    interface->ui.button_save   = ui_text_create (style_2,
-                                                  interface->theme.colors[0],
-                                                  interface->theme.colors[2],
-                                                  "save",
-                                                  TEXT_ALIGNMENT_CENTER);
-    interface->ui.button_load   = ui_text_create (style_2,
-                                                  interface->theme.colors[0],
-                                                  interface->theme.colors[2],
-                                                  "load",
-                                                  TEXT_ALIGNMENT_CENTER);
-    interface->ui.button_render = ui_text_create (style_2,
-                                                  interface->theme.colors[0],
-                                                  interface->theme.colors[2],
-                                                  "render",
-                                                  TEXT_ALIGNMENT_CENTER);
+    interface->ui.button_save       = ui_text_create (style_3,
+                                                      interface->theme.colors[0],
+                                                      interface->theme.colors[2],
+                                                      interface->theme.colors[1],
+                                                      interface->theme.colors[3],
+                                                      "Save",
+                                                      TEXT_ALIGNMENT_CENTER);
+    interface->ui.button_load       = ui_text_create (style_3,
+                                                      interface->theme.colors[0],
+                                                      interface->theme.colors[2],
+                                                      interface->theme.colors[1],
+                                                      interface->theme.colors[3],
+                                                      "Load",
+                                                      TEXT_ALIGNMENT_CENTER);
+    interface->ui.button_render     = ui_text_create (style_3,
+                                                      interface->theme.colors[0],
+                                                      interface->theme.colors[2],
+                                                      interface->theme.colors[1],
+                                                      interface->theme.colors[3],
+                                                      "Render",
+                                                      TEXT_ALIGNMENT_CENTER);
+    interface->ui.text_title        = ui_text_create (style_4,
+                                                      interface->theme.colors[2],
+                                                      interface->theme.colors[0],
+                                                      interface->theme.colors[0],
+                                                      interface->theme.colors[0],
+                                                      "Title:",
+                                                      TEXT_ALIGNMENT_LEFT);
+    interface->ui.text_description  = ui_text_create (style_4,
+                                                      interface->theme.colors[2],
+                                                      interface->theme.colors[0],
+                                                      interface->theme.colors[0],
+                                                      interface->theme.colors[0],
+                                                      "Description:",
+                                                      TEXT_ALIGNMENT_LEFT);
+    interface->ui.text_composer     = ui_text_create (style_4,
+                                                      interface->theme.colors[2],
+                                                      interface->theme.colors[0],
+                                                      interface->theme.colors[0],
+                                                      interface->theme.colors[0],
+                                                      "Composer:",
+                                                      TEXT_ALIGNMENT_LEFT);
+    interface->ui.field_title       = ui_text_create (style_5,
+                                                      interface->theme.colors[2],
+                                                      interface->theme.colors[0],
+                                                      interface->theme.colors[0],
+                                                      interface->theme.colors[0],
+                                                      interface->module->title,
+                                                      TEXT_ALIGNMENT_RIGHT);
+    interface->ui.field_description = ui_text_create (style_5,
+                                                      interface->theme.colors[2],
+                                                      interface->theme.colors[0],
+                                                      interface->theme.colors[0],
+                                                      interface->theme.colors[0],
+                                                      interface->module->description,
+                                                      TEXT_ALIGNMENT_RIGHT);
+    interface->ui.field_composer    = ui_text_create (style_5,
+                                                      interface->theme.colors[2],
+                                                      interface->theme.colors[0],
+                                                      interface->theme.colors[0],
+                                                      interface->theme.colors[0],
+                                                      interface->module->composer,
+                                                      TEXT_ALIGNMENT_RIGHT);
 
     interface->ui.layout_1
         = (ui_layout_t *) ui_layout_split_create (SPLIT_ORIENTATION_VERTICAL,
@@ -74,6 +135,18 @@ void interface_construct (interface_t *interface) {
         = (ui_layout_t *) ui_layout_split_create (SPLIT_ORIENTATION_HORIZONTAL,
                                                   interface->theme.spacing,
                                                   interface->ui.lengths_4);
+    interface->ui.layout_5
+        = (ui_layout_t *) ui_layout_split_create (SPLIT_ORIENTATION_VERTICAL,
+                                                  interface->theme.spacing,
+                                                  interface->ui.lengths_5);
+
+    interface->ui.view_configuration = ui_dummy_create (interface->theme.colors[0], style_2);
+    interface->ui.view_pattern       = ui_dummy_create (interface->theme.colors[0], style_2);
+    interface->ui.view_metadata      = ui_container_create (style_6,
+                                                            interface->ui.layout_5,
+                                                            6,
+                                                            interface->ui.children_5);
+    interface->ui.view_envelope      = ui_dummy_create (interface->theme.colors[0], style_2);
 
     interface->ui.pane_1 = ui_container_create (style_1,
                                                 interface->ui.layout_1,
@@ -92,19 +165,26 @@ void interface_construct (interface_t *interface) {
                                                 3,
                                                 interface->ui.children_4);
 
-    interface->ui.lengths_1[0] = 128;
+    interface->ui.lengths_1[0] = 140;
     interface->ui.lengths_1[1] = 0;
 
     interface->ui.lengths_2[0] = 0;
-    interface->ui.lengths_2[1] = 128;
+    interface->ui.lengths_2[1] = 140;
 
-    interface->ui.lengths_3[0] = 128;
+    interface->ui.lengths_3[0] = 134;
     interface->ui.lengths_3[1] = 0;
     interface->ui.lengths_3[2] = 24;
 
     interface->ui.lengths_4[0] = 38;
     interface->ui.lengths_4[1] = 38;
     interface->ui.lengths_4[2] = 0;
+
+    interface->ui.lengths_5[0] = 18;
+    interface->ui.lengths_5[1] = 18;
+    interface->ui.lengths_5[2] = 18;
+    interface->ui.lengths_5[3] = 18;
+    interface->ui.lengths_5[4] = 18;
+    interface->ui.lengths_5[5] = 18;
 
     interface->ui.children_1[0] = (ui_element_t *) interface->ui.view_configuration;
     interface->ui.children_1[1] = (ui_element_t *) interface->ui.pane_2;
@@ -119,6 +199,13 @@ void interface_construct (interface_t *interface) {
     interface->ui.children_4[0] = (ui_element_t *) interface->ui.button_save;
     interface->ui.children_4[1] = (ui_element_t *) interface->ui.button_load;
     interface->ui.children_4[2] = (ui_element_t *) interface->ui.button_render;
+
+    interface->ui.children_5[0] = (ui_element_t *) interface->ui.text_title;
+    interface->ui.children_5[1] = (ui_element_t *) interface->ui.field_title;
+    interface->ui.children_5[2] = (ui_element_t *) interface->ui.text_description;
+    interface->ui.children_5[3] = (ui_element_t *) interface->ui.field_description;
+    interface->ui.children_5[4] = (ui_element_t *) interface->ui.text_composer;
+    interface->ui.children_5[5] = (ui_element_t *) interface->ui.field_composer;
 
     interface->root = (ui_element_t *) interface->ui.pane_1;
 }

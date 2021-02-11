@@ -44,25 +44,36 @@ typedef struct interface_t {
         ui_layout_t *layout_2;
         ui_layout_t *layout_3;
         ui_layout_t *layout_4;
+        ui_layout_t *layout_5;
 
         ui_element_t *children_1[2];
         ui_element_t *children_2[2];
         ui_element_t *children_3[3];
         ui_element_t *children_4[3];
+        ui_element_t *children_5[6];
 
         double lengths_1[2];
         double lengths_2[2];
         double lengths_3[3];
         double lengths_4[3];
+        double lengths_5[6];
 
         ui_dummy_t *view_configuration;
         ui_dummy_t *view_pattern;
-        ui_dummy_t *view_metadata;
+        ui_container_t *view_metadata;
         ui_dummy_t *view_envelope;
 
         ui_text_t *button_save;
         ui_text_t *button_load;
         ui_text_t *button_render;
+
+        ui_text_t *text_title;
+        ui_text_t *text_description;
+        ui_text_t *text_composer;
+
+        ui_text_t *field_title;
+        ui_text_t *field_description;
+        ui_text_t *field_composer;
 
     } ui;
 

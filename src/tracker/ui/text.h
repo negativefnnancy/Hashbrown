@@ -19,6 +19,8 @@ typedef struct ui_text_t {
     ui_box_t base;
     color_t color_foreground;
     color_t color_background;
+    color_t color_hovered;
+    color_t color_pressed;
     char *text;
     text_alignment_t alignment;
 
@@ -28,6 +30,8 @@ void ui_text_init (ui_text_t *element,
                    ui_box_style_t style,
                    color_t color_foreground,
                    color_t color_background,
+                   color_t color_hovered,
+                   color_t color_pressed,
                    char *text,
                    text_alignment_t alignment);
 
@@ -44,6 +48,8 @@ void ui_text_event (ui_text_t *element,
 ui_text_t *ui_text_create  (ui_box_style_t style,
                             color_t color_foreground,
                             color_t color_background,
+                            color_t color_hovered,
+                            color_t color_pressed,
                             char *text,
                             text_alignment_t alignment);
 void       ui_text_destroy (ui_text_t *element);

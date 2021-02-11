@@ -8,6 +8,14 @@ region_t region_make (double x, double y, double width, double height) {
     return region;
 }
 
+region_t region_make_from_vectors (vec2_t position, vec2_t dimensions) {
+
+    region_t region;
+    region.position   = position;
+    region.dimensions = dimensions;
+    return region;
+}
+
 region_t region_make_corners (double x1, double y1, double x2, double y2) {
 
     region_t region;
@@ -68,6 +76,13 @@ bool region_contains_point (region_t region, vec2_t point) {
 
     return point.x >= top_left.x && point.x < bottom_right.x &&
            point.y >= top_left.y && point.y < bottom_right.y;
+}
+
+bool region_contains_mouse (region_t region) {
+
+    int x, y;
+    SDL_GetMouseState (&x, &y);
+    return region_contains_point (region, vec2_make (x, y));
 }
 
 region_t region_inset (region_t region, double amount) {

@@ -119,13 +119,62 @@ void ui_container_event (ui_container_t *element,
                 case EVENT_MOUSE_CLICK:
                     return;
 
+                /* ignore mouse enter events */
+                case EVENT_MOUSE_ENTER:
+                    element->hovered = NULL;
+                    return;
+
                 /* on mouse move, find the hovered child */
                 case EVENT_MOUSE_MOVE:
 
-                    element->hovered
-                        = ui_container_child_at_point (element,
-                                                       element_region,
-                                                       event.event.mouse.position);
+                    {
+                        ui_element_t *old_hovered = element->hovered;
+                        element->hovered
+                            = ui_container_child_at_point (element,
+                                                           element_region,
+                                                           event.event.mouse.position);
+
+                        /* if hover was changed, generate mouse enter and exit */
+                        /* TODO factor this out */
+                        if (old_hovered != element->hovered) {
+                            
+                            if (element->hovered) {
+
+                                region_t hovered_region
+                                    = ui_container_child_region (element,
+                                                                 element_region,
+                                                                 element->hovered);
+
+                                ui_event_t event_hover
+                                    = ui_event_make_mouse (EVENT_MOUSE_ENTER,
+                                                           event.event.mouse.position,
+                                                           event.event.mouse.button,
+                                                           event.event.mouse.pressed);
+                                ui_element_event (element->hovered,
+                                                  interface,
+                                                  event_hover,
+                                                  hovered_region);
+                            }
+
+                            if (old_hovered) {
+
+                                region_t hovered_region
+                                    = ui_container_child_region (element,
+                                                                 element_region,
+                                                                 old_hovered);
+
+                                ui_event_t event_hover
+                                    = ui_event_make_mouse (EVENT_MOUSE_EXIT,
+                                                           event.event.mouse.position,
+                                                           event.event.mouse.button,
+                                                           event.event.mouse.pressed);
+                                ui_element_event (old_hovered,
+                                                  interface,
+                                                  event_hover,
+                                                  hovered_region);
+                            }
+                        }
+                    }
                     break;
 
                 /* on mouse down, set selected to hovered child */
