@@ -34,29 +34,34 @@ ui_element_t *interface_construct_row (interface_t *interface,
                                                    interface->theme.colors[0],
                                                    interface->theme.colors[1],
                                                    interface->theme.colors[3],
-                                                   "+",
+                                                   malloc (2),
                                                    TEXT_ALIGNMENT_CENTER);
     children[1] = (ui_element_t *) ui_text_create (style_2,
                                                    interface->theme.colors[2],
                                                    interface->theme.colors[0],
                                                    interface->theme.colors[1],
                                                    interface->theme.colors[3],
-                                                   "...",
+                                                   malloc (4),
                                                    TEXT_ALIGNMENT_CENTER);
     children[2] = (ui_element_t *) ui_text_create (style_2,
                                                    interface->theme.colors[2],
                                                    interface->theme.colors[0],
                                                    interface->theme.colors[1],
                                                    interface->theme.colors[3],
-                                                   "..",
+                                                   malloc (3),
                                                    TEXT_ALIGNMENT_CENTER);
     children[3] = (ui_element_t *) ui_text_create (style_2,
                                                    interface->theme.colors[2],
                                                    interface->theme.colors[0],
                                                    interface->theme.colors[1],
                                                    interface->theme.colors[3],
-                                                   "....",
+                                                   malloc (5),
                                                    TEXT_ALIGNMENT_CENTER);
+
+    strcpy (((ui_text_t *) children[0])->text, "+");
+    strcpy (((ui_text_t *) children[1])->text, "...");
+    strcpy (((ui_text_t *) children[2])->text, "..");
+    strcpy (((ui_text_t *) children[3])->text, "....");
 
     lengths = calloc (4, sizeof (double));
     lengths[0] = 8;
