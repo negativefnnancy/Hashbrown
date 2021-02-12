@@ -5,6 +5,266 @@
 #include "interface.h"
 #include "ui/event.h"
 
+ui_element_t *interface_construct_row (interface_t *interface,
+                                       size_t i_pattern,
+                                       size_t i_row) {
+
+    ui_box_style_t style_1, style_2;
+
+    ui_layout_t *layout;
+    ui_element_t **children;
+    double *lengths;
+
+    style_1 = ui_box_style_make (0,
+                                 0,
+                                 0, 
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[0]);
+    style_2 = ui_box_style_make (0,
+                                 0,
+                                 0, 
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[0]);
+
+    children = calloc (4, sizeof (ui_element_t *));
+    children[0] = (ui_element_t *) ui_text_create (style_2,
+                                                   interface->theme.colors[2],
+                                                   interface->theme.colors[0],
+                                                   interface->theme.colors[1],
+                                                   interface->theme.colors[3],
+                                                   "+",
+                                                   TEXT_ALIGNMENT_CENTER);
+    children[1] = (ui_element_t *) ui_text_create (style_2,
+                                                   interface->theme.colors[2],
+                                                   interface->theme.colors[0],
+                                                   interface->theme.colors[1],
+                                                   interface->theme.colors[3],
+                                                   "...",
+                                                   TEXT_ALIGNMENT_CENTER);
+    children[2] = (ui_element_t *) ui_text_create (style_2,
+                                                   interface->theme.colors[2],
+                                                   interface->theme.colors[0],
+                                                   interface->theme.colors[1],
+                                                   interface->theme.colors[3],
+                                                   "..",
+                                                   TEXT_ALIGNMENT_CENTER);
+    children[3] = (ui_element_t *) ui_text_create (style_2,
+                                                   interface->theme.colors[2],
+                                                   interface->theme.colors[0],
+                                                   interface->theme.colors[1],
+                                                   interface->theme.colors[3],
+                                                   "....",
+                                                   TEXT_ALIGNMENT_CENTER);
+
+    lengths = calloc (4, sizeof (double));
+    lengths[0] = 8;
+    lengths[1] = 8 * 3;
+    lengths[2] = 8 * 2;
+    lengths[3] = 8 * 4;
+
+    layout = (ui_layout_t *) ui_layout_split_create (SPLIT_ORIENTATION_HORIZONTAL,
+                                                     8,
+                                                     lengths);
+
+    return (ui_element_t *) ui_container_create (style_1, layout, 4, children);
+}
+
+ui_element_t *interface_construct_channel_view (interface_t *interface, size_t i_channel) {
+
+    ui_box_style_t style_1, style_2, style_3;
+    size_t i;
+
+    ui_layout_t *layout;
+    ui_element_t **children;
+    double *lengths;
+
+    ui_layout_t *layout_header;
+    ui_element_t **children_header;
+    double *lengths_header;
+
+    ui_layout_t *layout_rows;
+    ui_element_t **children_rows;
+    double *lengths_rows;
+
+    style_1 = ui_box_style_make (0,
+                                 0,
+                                 0, 
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[2]);
+    style_2 = ui_box_style_make (0,
+                                 0,
+                                 0, 
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[0]);
+    style_3 = ui_box_style_make (0,
+                                 0,
+                                 8, 
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[0],
+                                 interface->theme.colors[0]);
+
+    children_header = calloc (10, sizeof (ui_element_t *));
+    children_header[0] = (ui_element_t *) ui_text_create (style_2,
+                                                          interface->theme.colors[0],
+                                                          interface->theme.colors[2],
+                                                          interface->theme.colors[2],
+                                                          interface->theme.colors[2],
+                                                          "1",
+                                                          TEXT_ALIGNMENT_CENTER);
+    children_header[1] = (ui_element_t *) ui_text_create (style_2,
+                                                          interface->theme.colors[2],
+                                                          interface->theme.colors[0],
+                                                          interface->theme.colors[1],
+                                                          interface->theme.colors[3],
+                                                          "-",
+                                                          TEXT_ALIGNMENT_CENTER);
+    children_header[2] = (ui_element_t *) ui_text_create (style_2,
+                                                          interface->theme.colors[2],
+                                                          interface->theme.colors[0],
+                                                          interface->theme.colors[0],
+                                                          interface->theme.colors[0],
+                                                          "1",
+                                                          TEXT_ALIGNMENT_CENTER);
+    children_header[3] = (ui_element_t *) ui_text_create (style_2,
+                                                          interface->theme.colors[2],
+                                                          interface->theme.colors[0],
+                                                          interface->theme.colors[1],
+                                                          interface->theme.colors[3],
+                                                          "+",
+                                                          TEXT_ALIGNMENT_CENTER);
+    children_header[4] = (ui_element_t *) ui_text_create (style_2,
+                                                          interface->theme.colors[2],
+                                                          interface->theme.colors[0],
+                                                          interface->theme.colors[1],
+                                                          interface->theme.colors[3],
+                                                          "-",
+                                                          TEXT_ALIGNMENT_CENTER);
+    children_header[5] = (ui_element_t *) ui_text_create (style_2,
+                                                          interface->theme.colors[2],
+                                                          interface->theme.colors[0],
+                                                          interface->theme.colors[0],
+                                                          interface->theme.colors[0],
+                                                          "2",
+                                                          TEXT_ALIGNMENT_CENTER);
+    children_header[6] = (ui_element_t *) ui_text_create (style_2,
+                                                          interface->theme.colors[2],
+                                                          interface->theme.colors[0],
+                                                          interface->theme.colors[1],
+                                                          interface->theme.colors[3],
+                                                          "+",
+                                                          TEXT_ALIGNMENT_CENTER);
+    children_header[7] = (ui_element_t *) ui_text_create (style_2,
+                                                          interface->theme.colors[2],
+                                                          interface->theme.colors[0],
+                                                          interface->theme.colors[1],
+                                                          interface->theme.colors[3],
+                                                          "-",
+                                                          TEXT_ALIGNMENT_CENTER);
+    children_header[8] = (ui_element_t *) ui_text_create (style_2,
+                                                          interface->theme.colors[2],
+                                                          interface->theme.colors[0],
+                                                          interface->theme.colors[0],
+                                                          interface->theme.colors[0],
+                                                          "8",
+                                                          TEXT_ALIGNMENT_CENTER);
+    children_header[9] = (ui_element_t *) ui_text_create (style_2,
+                                                          interface->theme.colors[2],
+                                                          interface->theme.colors[0],
+                                                          interface->theme.colors[1],
+                                                          interface->theme.colors[3],
+                                                          "+",
+                                                          TEXT_ALIGNMENT_CENTER);
+
+    lengths_header = calloc (10, sizeof (double));
+    lengths_header[0] = 14;
+    lengths_header[1] = 14;
+    lengths_header[2] = 10;
+    lengths_header[3] = 14;
+    lengths_header[4] = 14;
+    lengths_header[5] = 10;
+    lengths_header[6] = 14;
+    lengths_header[7] = 14;
+    lengths_header[8] = 10;
+    lengths_header[9] = 14;
+
+    layout_header = (ui_layout_t *) ui_layout_split_create (SPLIT_ORIENTATION_HORIZONTAL,
+                                                            0,
+                                                            lengths_header);
+
+    children_rows = calloc (20, sizeof (ui_element_t *));
+    for (i = 0; i < 20; i++)
+        children_rows[i] = interface_construct_row (interface, 0, i);
+
+    lengths_rows = calloc (20, sizeof (double));
+    for (i = 0; i < 20; i++)
+        lengths_rows[i] = 14;
+
+    layout_rows = (ui_layout_t *) ui_layout_split_create (SPLIT_ORIENTATION_VERTICAL,
+                                                          0,
+                                                          lengths_rows);
+
+    children = calloc (interface->module->n_channels, sizeof (ui_element_t *));
+    children[0] = (ui_element_t *) ui_container_create (style_2, layout_header, 10, children_header);
+    children[1] = (ui_element_t *) ui_container_create (style_3,
+                                                        layout_rows,
+                                                        20,
+                                                        children_rows);
+
+    lengths = calloc (interface->module->n_channels, sizeof (double));
+    lengths[0] = 14;
+    lengths[1] = 0;
+
+    layout = (ui_layout_t *) ui_layout_split_create (SPLIT_ORIENTATION_VERTICAL,
+                                                     1,
+                                                     lengths);
+
+    return (ui_element_t *) ui_container_create (style_1, layout, 2, children);
+}
+
+void interface_construct_pattern_view (interface_t *interface) {
+
+    ui_box_style_t style;
+
+    size_t i;
+    ui_layout_t *layout;
+    ui_element_t **children;
+    double *lengths;
+
+    if (interface->ui.view_pattern) {
+
+        /* TODO free old stuff */
+    }
+
+    style = ui_box_style_make (0,
+                               1,
+                               0, 
+                               interface->theme.colors[0],
+                               interface->theme.colors[2],
+                               interface->theme.colors[2]);
+
+    children = calloc (interface->module->n_channels, sizeof (ui_element_t *));
+    lengths  = calloc (interface->module->n_channels, sizeof (double));
+
+    for (i = 0; i < interface->module->n_channels; i++) {
+
+        children[i] = interface_construct_channel_view (interface, i);
+        lengths[i] = 128;
+    }
+
+    layout = (ui_layout_t *) ui_layout_split_create (SPLIT_ORIENTATION_HORIZONTAL,
+                                                     1,
+                                                     lengths);
+
+    interface->ui.view_pattern = ui_container_create (style,
+                                                      layout,
+                                                      interface->module->n_channels,
+                                                      children);
+}
+
 void interface_construct (interface_t *interface) {
 
     ui_box_style_t style_1, style_2, style_3, style_4, style_5, style_6;
@@ -60,42 +320,42 @@ void interface_construct (interface_t *interface) {
                                                       interface->theme.colors[2],
                                                       interface->theme.colors[1],
                                                       interface->theme.colors[3],
-                                                      "Save",
+                                                      "SAVE",
                                                       TEXT_ALIGNMENT_CENTER);
     interface->ui.button_load       = ui_text_create (style_3,
                                                       interface->theme.colors[0],
                                                       interface->theme.colors[2],
                                                       interface->theme.colors[1],
                                                       interface->theme.colors[3],
-                                                      "Load",
+                                                      "LOAD",
                                                       TEXT_ALIGNMENT_CENTER);
     interface->ui.button_render     = ui_text_create (style_3,
                                                       interface->theme.colors[0],
                                                       interface->theme.colors[2],
                                                       interface->theme.colors[1],
                                                       interface->theme.colors[3],
-                                                      "Render",
+                                                      "RENDER",
                                                       TEXT_ALIGNMENT_CENTER);
     interface->ui.text_title        = ui_text_create (style_4,
                                                       interface->theme.colors[2],
                                                       interface->theme.colors[0],
                                                       interface->theme.colors[0],
                                                       interface->theme.colors[0],
-                                                      "Title:",
+                                                      "TITLE:",
                                                       TEXT_ALIGNMENT_LEFT);
     interface->ui.text_description  = ui_text_create (style_4,
                                                       interface->theme.colors[2],
                                                       interface->theme.colors[0],
                                                       interface->theme.colors[0],
                                                       interface->theme.colors[0],
-                                                      "Description:",
+                                                      "DESCRIPTION:",
                                                       TEXT_ALIGNMENT_LEFT);
     interface->ui.text_composer     = ui_text_create (style_4,
                                                       interface->theme.colors[2],
                                                       interface->theme.colors[0],
                                                       interface->theme.colors[0],
                                                       interface->theme.colors[0],
-                                                      "Composer:",
+                                                      "COMPOSER:",
                                                       TEXT_ALIGNMENT_LEFT);
     interface->ui.field_title       = ui_text_create (style_5,
                                                       interface->theme.colors[2],
@@ -140,8 +400,8 @@ void interface_construct (interface_t *interface) {
                                                   interface->theme.spacing,
                                                   interface->ui.lengths_5);
 
+    interface_construct_pattern_view (interface);
     interface->ui.view_configuration = ui_dummy_create (interface->theme.colors[0], style_2);
-    interface->ui.view_pattern       = ui_dummy_create (interface->theme.colors[0], style_2);
     interface->ui.view_metadata      = ui_container_create (style_6,
                                                             interface->ui.layout_5,
                                                             6,
@@ -202,10 +462,10 @@ void interface_construct (interface_t *interface) {
 
     interface->ui.children_5[0] = (ui_element_t *) interface->ui.text_title;
     interface->ui.children_5[1] = (ui_element_t *) interface->ui.field_title;
-    interface->ui.children_5[2] = (ui_element_t *) interface->ui.text_description;
-    interface->ui.children_5[3] = (ui_element_t *) interface->ui.field_description;
-    interface->ui.children_5[4] = (ui_element_t *) interface->ui.text_composer;
-    interface->ui.children_5[5] = (ui_element_t *) interface->ui.field_composer;
+    interface->ui.children_5[2] = (ui_element_t *) interface->ui.text_composer;
+    interface->ui.children_5[3] = (ui_element_t *) interface->ui.field_composer;
+    interface->ui.children_5[4] = (ui_element_t *) interface->ui.text_description;
+    interface->ui.children_5[5] = (ui_element_t *) interface->ui.field_description;
 
     interface->root = (ui_element_t *) interface->ui.pane_1;
 }

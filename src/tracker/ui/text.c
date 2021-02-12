@@ -129,7 +129,7 @@ void ui_text_draw (ui_text_t *element,
         = region_make_from_vectors (vec2_subtract (region_destination.position,
                                                    region_text.position),
                                     region_destination.dimensions);
-    region_destination_background = region_intersection (region_element,     region_clipping);
+    region_destination_background = region_intersection (region_element, region_clipping);  
 
     rect_source                 = sdl_rect_from_region (region_source);
     rect_destination            = sdl_rect_from_region (region_destination);

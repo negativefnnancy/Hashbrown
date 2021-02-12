@@ -63,7 +63,7 @@ void ui_box_draw (ui_box_t *element,
     draw_box (interface->renderer, clipping_region, padding_region, content_region, element->style.color_padding);
 
     /* draw the content */
-    intersection = region_intersection (content_region, clipping_region);
+    intersection = region_intersection (padding_region, clipping_region);
     element->method_draw (element, interface, intersection, content_region);
 }
 

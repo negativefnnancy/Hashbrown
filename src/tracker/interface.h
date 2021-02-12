@@ -59,7 +59,7 @@ typedef struct interface_t {
         double lengths_5[6];
 
         ui_dummy_t *view_configuration;
-        ui_dummy_t *view_pattern;
+        ui_container_t *view_pattern;
         ui_container_t *view_metadata;
         ui_dummy_t *view_envelope;
 
