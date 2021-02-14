@@ -7,6 +7,8 @@
 #include <SDL2/SDL_ttf.h>
 
 #include <hashbrown/music/module.h>
+#include <hashbrown/music/player.h>
+#include <hashbrown/sound/soundchip.h>
 
 #include "theme.h"
 #include "region.h"
@@ -31,6 +33,9 @@ typedef struct interface_t {
     region_t repaint_region;  /* the region of the window to redraw on vsync */
     ui_element_t *root;       /* the ui element at the root of the window */
     bool running;             /* whether the interface is still running */
+
+    player_t player;
+    soundchip_t soundchip;
 
     /* all the ui elements */
     struct {

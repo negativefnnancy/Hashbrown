@@ -40,15 +40,47 @@ void module_deinit (module_t *module) {
 
 void module_init_empty (module_t *module) {
 
+    const size_t n_channels = 4;
+    const size_t n_rows     = 32;
+
+    size_t i;
+
     module_init (module,
                  "n00 s0ng",
                  "some1 kewl",
                  "kewlest song ever",
-                 4,
-                 4,
-                 1);
+                 n_channels,
+                 n_channels,
+                 2);
 
-    /* TODO */
+    for (i = 0; i < n_channels; i++) {
+
+        channel_init (&module->channels[i], 1);
+        module->channels[i].i_patterns[0] = i;
+        pattern_init (&module->patterns[i], n_rows);
+    }
+
+    envelope_init (&module->envelopes[0], 4, LOOP_MODE_NONE);
+    module->envelopes[0].samples[0].amplitude = 0;
+    module->envelopes[0].samples[1].amplitude = 1;
+    module->envelopes[0].samples[2].amplitude = 0.5;
+    module->envelopes[0].samples[3].amplitude = 0;
+    module->envelopes[0].samples[0].duration = 0.025;
+    module->envelopes[0].samples[1].duration = 0.1;
+    module->envelopes[0].samples[2].duration = 0.5;
+    module->envelopes[0].samples[3].duration = 0;
+
+    envelope_init (&module->envelopes[1], 4, LOOP_MODE_NORMAL);
+    module->envelopes[1].i_loop_begin = 2;
+    module->envelopes[1].i_loop_end = 2;
+    module->envelopes[1].samples[0].amplitude = 0;
+    module->envelopes[1].samples[1].amplitude = 1;
+    module->envelopes[1].samples[2].amplitude = 0.75;
+    module->envelopes[1].samples[3].amplitude = 0;
+    module->envelopes[1].samples[0].duration = 0.05;
+    module->envelopes[1].samples[1].duration = 0.2;
+    module->envelopes[1].samples[2].duration = 0.5;
+    module->envelopes[1].samples[3].duration = 0;
 }
 
 int module_load (module_t *module, char *path) {

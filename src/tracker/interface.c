@@ -93,6 +93,9 @@ ui_element_t *interface_construct_channel_view (interface_t *interface, size_t i
     ui_element_t **children_rows;
     double *lengths_rows;
 
+    size_t n_rows =
+        interface->module->patterns[interface->module->channels[i_channel].i_patterns[interface->player.positions[i_channel].i_i_pattern]].n_rows;
+
     style_1 = ui_box_style_make (0,
                                  0,
                                  0, 
@@ -118,8 +121,9 @@ ui_element_t *interface_construct_channel_view (interface_t *interface, size_t i
                                                           interface->theme.colors[2],
                                                           interface->theme.colors[2],
                                                           interface->theme.colors[2],
-                                                          "1",
+                                                          malloc (3),
                                                           TEXT_ALIGNMENT_CENTER);
+    sprintf (((ui_text_t *) children_header[0])->text, "%d", i_channel + 1);
     children_header[1] = (ui_element_t *) ui_text_create (style_2,
                                                           interface->theme.colors[2],
                                                           interface->theme.colors[0],
@@ -132,8 +136,9 @@ ui_element_t *interface_construct_channel_view (interface_t *interface, size_t i
                                                           interface->theme.colors[0],
                                                           interface->theme.colors[0],
                                                           interface->theme.colors[0],
-                                                          "1",
+                                                          malloc (4),
                                                           TEXT_ALIGNMENT_CENTER);
+    sprintf (((ui_text_t *) children_header[2])->text, "%d", interface->player.positions[i_channel].i_i_pattern + 1);
     children_header[3] = (ui_element_t *) ui_text_create (style_2,
                                                           interface->theme.colors[2],
                                                           interface->theme.colors[0],
@@ -153,8 +158,10 @@ ui_element_t *interface_construct_channel_view (interface_t *interface, size_t i
                                                           interface->theme.colors[0],
                                                           interface->theme.colors[0],
                                                           interface->theme.colors[0],
-                                                          "2",
+                                                          malloc (4),
                                                           TEXT_ALIGNMENT_CENTER);
+    sprintf (((ui_text_t *) children_header[5])->text, "%d",
+            interface->module->channels[i_channel].i_patterns[interface->player.positions[i_channel].i_i_pattern] + 1);
     children_header[6] = (ui_element_t *) ui_text_create (style_2,
                                                           interface->theme.colors[2],
                                                           interface->theme.colors[0],
@@ -174,8 +181,9 @@ ui_element_t *interface_construct_channel_view (interface_t *interface, size_t i
                                                           interface->theme.colors[0],
                                                           interface->theme.colors[0],
                                                           interface->theme.colors[0],
-                                                          "8",
+                                                          malloc (4),
                                                           TEXT_ALIGNMENT_CENTER);
+    sprintf (((ui_text_t *) children_header[8])->text, "%d", n_rows);
     children_header[9] = (ui_element_t *) ui_text_create (style_2,
                                                           interface->theme.colors[2],
                                                           interface->theme.colors[0],
@@ -193,19 +201,19 @@ ui_element_t *interface_construct_channel_view (interface_t *interface, size_t i
     lengths_header[5] = 10;
     lengths_header[6] = 14;
     lengths_header[7] = 14;
-    lengths_header[8] = 10;
+    lengths_header[8] = 14;
     lengths_header[9] = 14;
 
     layout_header = (ui_layout_t *) ui_layout_split_create (SPLIT_ORIENTATION_HORIZONTAL,
                                                             0,
                                                             lengths_header);
 
-    children_rows = calloc (20, sizeof (ui_element_t *));
-    for (i = 0; i < 20; i++)
+    children_rows = calloc (n_rows, sizeof (ui_element_t *));
+    for (i = 0; i < n_rows; i++)
         children_rows[i] = interface_construct_row (interface, 0, i);
 
-    lengths_rows = calloc (20, sizeof (double));
-    for (i = 0; i < 20; i++)
+    lengths_rows = calloc (n_rows, sizeof (double));
+    for (i = 0; i < n_rows; i++)
         lengths_rows[i] = 14;
 
     layout_rows = (ui_layout_t *) ui_layout_split_create (SPLIT_ORIENTATION_VERTICAL,
@@ -216,7 +224,7 @@ ui_element_t *interface_construct_channel_view (interface_t *interface, size_t i
     children[0] = (ui_element_t *) ui_container_create (style_2, layout_header, 10, children_header);
     children[1] = (ui_element_t *) ui_container_create (style_3,
                                                         layout_rows,
-                                                        20,
+                                                        n_rows,
                                                         children_rows);
 
     lengths = calloc (interface->module->n_channels, sizeof (double));
@@ -257,7 +265,7 @@ void interface_construct_pattern_view (interface_t *interface) {
     for (i = 0; i < interface->module->n_channels; i++) {
 
         children[i] = interface_construct_channel_view (interface, i);
-        lengths[i] = 128;
+        lengths[i] = 132;
     }
 
     layout = (ui_layout_t *) ui_layout_split_create (SPLIT_ORIENTATION_HORIZONTAL,
@@ -514,6 +522,8 @@ int interface_init (interface_t *interface, module_t *module) {
     memset (interface, 0, sizeof (interface_t));
     interface->module = module;
     interface->running = true;
+    soundchip_init (&interface->soundchip);
+    player_init (&interface->player, module, &interface->soundchip);
 
     /* initialize SDL */
     if (SDL_Init (SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
