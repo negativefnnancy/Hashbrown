@@ -33,6 +33,16 @@ target_link_libraries(sound m)
 
 
 
+# display module
+
+add_library(display STATIC
+    src/display/display.c
+)
+
+target_include_directories(display PUBLIC include)
+
+
+
 # music module
 
 add_library(music STATIC
@@ -110,3 +120,12 @@ add_executable(test_music
 )
 
 target_link_libraries(test_music PUBLIC sound music sndfile)
+
+add_executable(test_display
+    src/tests/display.c
+)
+
+target_include_directories(hashbrown_tracker PRIVATE ${SDL2_INCLUDE_DIRS})
+
+target_link_libraries(test_display PUBLIC display PRIVATE ${SDL2_LIBRARIES})
+
