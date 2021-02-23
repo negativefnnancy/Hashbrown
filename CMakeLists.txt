@@ -126,7 +126,12 @@ add_executable(test_display
     src/tests/display.c
 )
 
-target_include_directories(hashbrown_tracker PRIVATE ${SDL2_INCLUDE_DIRS})
-
+target_include_directories(test_display PRIVATE ${SDL2_INCLUDE_DIRS})
 target_link_libraries(test_display PUBLIC display PRIVATE ${SDL2_LIBRARIES})
 
+add_executable(test_raster
+    src/tests/raster.c
+)
+
+target_include_directories(test_raster PRIVATE ${SDL2_INCLUDE_DIRS})
+target_link_libraries(test_raster PUBLIC display PRIVATE ${SDL2_LIBRARIES})
