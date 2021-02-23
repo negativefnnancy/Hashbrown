@@ -32,7 +32,129 @@ typedef struct app_t {
 
 } app_t;
 
+typedef struct vec3_t {
+
+    double x, y, z;
+
+} vec3_t;
+
+vec3_t vec3_make (double x, double y, double z) {
+
+    vec3_t vector;
+    vector.x = x;
+    vector.y = y;
+    vector.z = z;
+    return vector;
+}
+
+typedef struct sphere_t {
+
+    vec3_t origin;
+    double radius;
+
+} sphere_t;
+
+sphere_t sphere_make (vec3_t origin, double radius) {
+
+    sphere_t sphere;
+    sphere.origin = origin;
+    sphere.radius = radius;
+    return sphere;
+}
+
+typedef struct ray3_t {
+
+    vec3_t origin;
+    vec3_t direction; /* unit vector */
+
+} ray3_t;
+
+double vec3_dot (vec3_t a, vec3_t b) {
+
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
+double vec3_length (vec3_t vector) {
+
+    return sqrt (vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
+}
+
+vec3_t vec3_subtract (vec3_t a, vec3_t b) {
+
+    return vec3_make (a.x - b.x, a.y - b.y, a.z - b.z);
+}
+
+vec3_t vec3_multiply (vec3_t a, vec3_t b) {
+
+    return vec3_make (a.x * b.x, a.y * b.y, a.z * b.z);
+}
+
+vec3_t vec3_divide_scalar (vec3_t vector, double scalar) {
+
+    return vec3_make (vector.x / scalar, vector.y / scalar, vector.z / scalar);
+}
+
+vec3_t vec3_subtract_scalar (vec3_t vector, double scalar) {
+
+    return vec3_make (vector.x - scalar, vector.y - scalar, vector.z - scalar);
+}
+
+vec3_t vec3_unit (vec3_t vector) {
+
+    return vec3_divide_scalar (vector, vec3_length (vector));
+}
+
+vec3_t vec3_direction (vec3_t origin, vec3_t target) {
+
+    return vec3_unit (vec3_subtract (target, origin));
+}
+
+ray3_t ray3_make (vec3_t origin, vec3_t target) {
+
+    ray3_t ray;
+    ray.origin    = origin;
+    ray.direction = vec3_direction (origin, target);
+    return ray;
+}
+
 extern double noise ();
+
+bool rand_bool (double probability) {
+
+    return noise () < probability;
+}
+
+bool solve_quadratic (double a, double b, double c, double *x1, double *x2) {
+
+    double discriminant = b * b - 4 * a * c;
+    if (discriminant < 0)
+        return false;
+    double sqrt_discriminant = sqrt (discriminant);
+    *x1 = -0.5 * (b + sqrt_discriminant) / a;
+    *x2 = -0.5 * (b - sqrt_discriminant) / a;
+    return true;
+}
+
+bool ray_cast (ray3_t ray) {
+
+    /* the sphere in the scene */
+    sphere_t sphere = sphere_make (vec3_make (0, 0, 1), 1);
+
+    /* find intersection points */
+    vec3_t relative_origin = vec3_subtract (ray.origin, sphere.origin);
+    double a = vec3_dot (ray.direction,   ray.direction);
+    double b = vec3_dot (relative_origin, ray.direction) * 2;
+    double c = vec3_dot (relative_origin, relative_origin) - sphere.radius * sphere.radius;
+    double x1, x2;
+    if (solve_quadratic (a, b, c, &x1, &x2)) {
+
+        /* hit the sphere */
+        return true;
+
+    } else
+        /* we hit the skyyyy */
+        return false;
+}
 
 void callback (display_t *display,
                unsigned long int i_electron,
@@ -41,12 +163,32 @@ void callback (display_t *display,
 
     app_t *app = (app_t *) data;
 
-    app->display.gun_enabled = true;
-
+    /* circle */
+    /*
     double angle = noise () * M_PI * 2;
     double radius = app->display.width * sqrt (noise ()) / 4;
     app->display.x = cos (angle) * radius + app->display.width / 2;
     app->display.y = sin (angle) * radius + app->display.height / 2;
+    app->display.gun_enabled = true;
+    */
+
+    /* path tracing */
+
+    /* randomly sample a point on the screen */
+    const double eye_z = -1; /* 90 degrees FOV */
+    double ratio = app->display.width / app->display.height;
+
+    /* normalized device coordinates */
+    double x = (noise () * 2 - 1) * ratio;
+    double y = noise () * 2 - 1;
+    
+    /* cast a ray from the eye to the point on screen */
+    ray3_t ray = ray3_make (vec3_make (0, 0, eye_z), vec3_make (x, y, 0));
+    app->display.gun_enabled = ray_cast (ray);
+
+    /* convert to screen coordinates */
+    app->display.y = (y * app->display.height         + app->display.height) / 2;
+    app->display.x = (x * app->display.height / ratio + app->display.width) / 2;
 }
 
 int update_size (app_t *app) {
