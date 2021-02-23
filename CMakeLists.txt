@@ -16,6 +16,17 @@ pkg_search_module(SDL2TTF REQUIRED SDL2_ttf)
 
 
 
+# display module
+
+add_library(display STATIC
+    src/display/display.c
+)
+
+target_include_directories(display PUBLIC include)
+target_link_libraries(display m)
+
+
+
 # sound module
 
 add_library(sound STATIC
@@ -30,16 +41,6 @@ add_library(sound STATIC
 
 target_include_directories(sound PUBLIC include)
 target_link_libraries(sound m)
-
-
-
-# display module
-
-add_library(display STATIC
-    src/display/display.c
-)
-
-target_include_directories(display PUBLIC include)
 
 
 
