@@ -12,12 +12,12 @@
 
 #include <hashbrown/display/display.h>
 
-#define WIDTH 480
-#define HEIGHT 360
+#define WIDTH (480*2)
+#define HEIGHT (360*2)
 
 #define REALTIME false
 #define FPS 60 /* non real time */
-#define EXPORT true /* export all the frames to "images/xxxx.png" */
+#define EXPORT false /* export all the frames to "images/xxxx.png" */
 
 /* TODO consolodate this demo with the display.c demo */
 
