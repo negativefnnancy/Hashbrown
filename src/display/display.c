@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <math.h>
 
@@ -34,7 +35,8 @@ void display_init (display_t *display,
     display->buffer_output   = calloc (width * height, sizeof (uint32_t));
     display->callback = callback;
     display->data = data;
-    display->power_supply_in = 1;
+    display->power_supply_in  = 1;
+    display->power_supply_out = 1;
     generate_kernel (display);
 }
 
@@ -191,6 +193,14 @@ void display_process (display_t *display, double time) {
     /* calculate how many electrons should be emitted */
     i_electron = time * ELECTRONS_PER_SECOND;
     delta_electrons = i_electron - display->i_electron;
+
+    /* electron skipping */
+    /*if (delta_electrons > MAX_ELECTRONS_PER_FRAME) {
+
+        fprintf (stderr, "Warning: dropping %d electrons\n", delta_electrons - MAX_ELECTRONS_PER_FRAME);
+        delta_electrons = MAX_ELECTRONS_PER_FRAME;
+        display->i_electron = i_electron - delta_electrons;
+    }*/
 
     /* emit the amount of electrons */
     for (i = 0; i < delta_electrons; i++) {
