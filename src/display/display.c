@@ -115,10 +115,10 @@ uint32_t color_format (double red, double green, double blue, double alpha) {
     uint8_t green_clamp = color_channel_clamp (green);
     uint8_t blue_clamp  = color_channel_clamp (blue);
     uint8_t alpha_clamp = color_channel_clamp (alpha);
-    return (red_clamp   << 24) |
-           (green_clamp << 16) |
-           (blue_clamp  << 8)  |
-           (alpha_clamp << 0);
+    return (red_clamp   << 0)  |
+           (green_clamp << 8)  |
+           (blue_clamp  << 16) |
+           (alpha_clamp << 24);
 }
 
 uint32_t color_map (double intensity) {

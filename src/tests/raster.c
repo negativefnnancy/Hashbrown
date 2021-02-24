@@ -17,6 +17,7 @@
 
 #define REALTIME false
 #define FPS 60 /* non real time */
+#define EXPORT true /* export all the frames to "images/xxxx.png" */
 
 /* TODO consolodate this demo with the display.c demo */
 
@@ -70,6 +71,109 @@ vec3_t vec3_make (double x, double y, double z) {
     return vector;
 }
 
+typedef struct vec4_t {
+
+    double x, y, z, w;
+
+} vec4_t;
+
+vec4_t vec4_make (double x, double y, double z, double w) {
+
+    vec4_t vector;
+    vector.x = x;
+    vector.y = y;
+    vector.z = z;
+    vector.w = w;
+    return vector;
+}
+
+double vec4_dot (vec4_t a, vec4_t b) {
+
+    return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+}
+
+vec4_t vec4_multiply (vec4_t a, vec4_t b) {
+
+    return vec4_make (a.x * b.x,
+                      a.y * b.y,
+                      a.z * b.z,
+                      a.w * b.w);
+}
+
+typedef struct mat4_t {
+
+    vec4_t x, y, z, w;
+
+} mat4_t;
+
+mat4_t mat4_make (vec4_t x, vec4_t y, vec4_t z, vec4_t w) {
+
+    mat4_t matrix;
+    matrix.x = x;
+    matrix.y = y;
+    matrix.z = z;
+    matrix.w = w;
+    return matrix;
+}
+
+mat4_t mat4_transpose (mat4_t matrix) {
+
+    vec4_t x = vec4_make (matrix.x.x, matrix.y.x, matrix.z.x, matrix.w.x);
+    vec4_t y = vec4_make (matrix.x.y, matrix.y.y, matrix.z.y, matrix.w.y);
+    vec4_t z = vec4_make (matrix.x.z, matrix.y.z, matrix.z.z, matrix.w.z);
+    vec4_t w = vec4_make (matrix.x.w, matrix.y.w, matrix.z.z, matrix.w.w);
+    return mat4_make (x, y, z, w);
+}
+
+mat4_t mat4_multiply (mat4_t a, mat4_t b) {
+
+    mat4_t b_transpose = mat4_transpose (b);
+    return mat4_make (vec4_multiply (a.x, b_transpose.x),
+                      vec4_multiply (a.y, b_transpose.y),
+                      vec4_multiply (a.z, b_transpose.z),
+                      vec4_multiply (a.w, b_transpose.w));
+}
+
+vec4_t mat4_multiply_vec4 (mat4_t matrix, vec4_t vector) {
+
+    return vec4_make (vec4_dot (matrix.x, vector),
+                      vec4_dot (matrix.y, vector),
+                      vec4_dot (matrix.z, vector),
+                      vec4_dot (matrix.w, vector));
+}
+
+mat4_t mat4_identity () {
+
+    return mat4_make (vec4_make (1, 0, 0, 0),
+                      vec4_make (0, 1, 0, 0),
+                      vec4_make (0, 0, 1, 0),
+                      vec4_make (0, 0, 0, 1));
+}
+
+mat4_t make_rotation_x (double degrees) {
+
+    return mat4_make (vec4_make (0, 0, 0, 0),
+                      vec4_make (0, cos (degrees), -sin (degrees), 0),
+                      vec4_make (0, sin (degrees), cos (degrees), 0),
+                      vec4_make (0, 0, 0, 1));
+}
+
+mat4_t make_rotation_y (double degrees) {
+
+    return mat4_make (vec4_make (cos (degrees), 0, sin (degrees), 0),
+                      vec4_make (0, 0, 0, 0),
+                      vec4_make (-sin (degrees), 0, cos (degrees), 0),
+                      vec4_make (0, 0, 0, 1));
+}
+
+mat4_t make_rotation_z (double degrees) {
+
+    return mat4_make (vec4_make (cos (degrees), -sin (degrees), 0, 0),
+                      vec4_make (sin (degrees), cos (degrees), 0, 0),
+                      vec4_make (0, 0, 1, 0),
+                      vec4_make (0, 0, 0, 1));
+}
+
 typedef struct sphere_t {
 
     vec3_t origin;
@@ -83,6 +187,49 @@ sphere_t sphere_make (vec3_t origin, double radius) {
     sphere.origin = origin;
     sphere.radius = radius;
     return sphere;
+}
+
+typedef struct plane_t {
+
+    vec3_t origin;
+    vec3_t direction;
+
+} plane_t;
+
+plane_t plane_make (vec3_t origin, vec3_t direction) {
+
+    plane_t plane;
+    plane.origin = origin;
+    plane.direction = direction;
+    return plane;
+}
+
+typedef struct box_t {
+
+    vec3_t min;
+    vec3_t max;
+    mat4_t transform;
+
+} box_t;
+
+box_t box_make (vec3_t min, vec3_t max, mat4_t transform) {
+
+    box_t box;
+    box.min = min;
+    box.max = max;
+    box.transform = transform;
+    return box;
+}
+
+void box_rotate (box_t *box, double x, double y, double z) {
+
+    mat4_t rotation_x = make_rotation_x (x);
+    mat4_t rotation_y = make_rotation_y (y);
+    mat4_t rotation_z = make_rotation_z (z);
+
+    box->transform = mat4_multiply (box->transform, rotation_x);
+    box->transform = mat4_multiply (box->transform, rotation_y);
+    box->transform = mat4_multiply (box->transform, rotation_z);
 }
 
 typedef struct ray3_t {
@@ -124,6 +271,11 @@ vec3_t vec3_subtract (vec3_t a, vec3_t b) {
 vec3_t vec3_multiply (vec3_t a, vec3_t b) {
 
     return vec3_make (a.x * b.x, a.y * b.y, a.z * b.z);
+}
+
+vec3_t vec3_divide (vec3_t a, vec3_t b) {
+
+    return vec3_make (a.x / b.x, a.y / b.y, a.z / b.z);
 }
 
 vec3_t vec3_multiply_scalar (vec3_t vector, double scalar) {
@@ -177,13 +329,15 @@ bool solve_quadratic (double a, double b, double c, double *x1, double *x2) {
     return true;
 }
 
-bool ray_intersect_sphere (ray3_t ray, sphere_t sphere, double *distance, vec3_t *point, vec3_t *normal) {
+bool ray_intersect_sphere (ray3_t ray, void *data, double *distance, vec3_t *point, vec3_t *normal) {
+
+    sphere_t *sphere = (sphere_t *) data;
 
     /* find intersection points */
-    vec3_t relative_origin = vec3_subtract (ray.origin, sphere.origin);
+    vec3_t relative_origin = vec3_subtract (ray.origin, sphere->origin);
     double a = vec3_dot (ray.direction,   ray.direction);
     double b = vec3_dot (relative_origin, ray.direction) * 2;
-    double c = vec3_dot (relative_origin, relative_origin) - sphere.radius * sphere.radius;
+    double c = vec3_dot (relative_origin, relative_origin) - sphere->radius * sphere->radius;
     double x1, x2;
     if (solve_quadratic (a, b, c, &x1, &x2)) {
 
@@ -198,7 +352,7 @@ bool ray_intersect_sphere (ray3_t ray, sphere_t sphere, double *distance, vec3_t
         *point = vec3_add (ray.origin, vec3_multiply_scalar (ray.direction, *distance));
 
         /* get the surface normal */
-        *normal = vec3_direction (sphere.origin, *point);
+        *normal = vec3_direction (sphere->origin, *point);
 
         /* we hit the sphereeeeeeeee */
         return true;
@@ -208,42 +362,152 @@ bool ray_intersect_sphere (ray3_t ray, sphere_t sphere, double *distance, vec3_t
         return false;
 }
 
-#define N_SPHERES 3
+bool ray_intersect_plane (ray3_t ray, void *data, double *distance, vec3_t *point, vec3_t *normal) {
+
+    plane_t *plane = (plane_t *) data;
+
+    double denominator = vec3_dot (ray.direction, plane->direction);
+    if (denominator > 0)
+        return false;
+
+    *distance = vec3_dot (vec3_subtract (plane->origin, ray.direction), plane->direction) / denominator;
+
+    if (*distance < 0)
+        return false;
+
+    *point = vec3_add (ray.origin, vec3_multiply_scalar (ray.direction, *distance));
+    *normal = plane->direction;
+
+    return true;
+}
+
+bool ray_intersect_box (ray3_t ray, void *data, double *distance, vec3_t *point, vec3_t *normal) {
+
+    box_t *box = (box_t *) data;
+
+    vec3_t invdir = vec3_divide (vec3_make (1, 1, 1), ray.direction);
+    int sign[3];
+    sign[0] = (invdir.x < 0);
+    sign[1] = (invdir.y < 0);
+    sign[2] = (invdir.z < 0);
+
+    float tmin, tmax, tymin, tymax, tzmin, tzmax;
+
+    vec3_t bounds[2];
+    bounds[0] = box->min;
+    bounds[1] = box->max;
+
+    tmin = (bounds[sign[0]].x - ray.origin.x) * invdir.x;
+    tmax = (bounds[1-sign[0]].x - ray.origin.x) * invdir.x;
+    tymin = (bounds[sign[1]].y - ray.origin.y) * invdir.y;
+    tymax = (bounds[1-sign[1]].y - ray.origin.y) * invdir.y;
+
+    if ((tmin > tymax) || (tymin > tmax))
+        return false;
+    if (tymin > tmin)
+        tmin = tymin;
+    if (tymax < tmax)
+        tmax = tymax;
+
+    tzmin = (bounds[sign[2]].z - ray.origin.z) * invdir.z;
+    tzmax = (bounds[1-sign[2]].z - ray.origin.z) * invdir.z;
+
+    if ((tmin > tzmax) || (tzmin > tmax))
+        return false;
+    if (tzmin > tmin)
+        tmin = tzmin;
+    if (tzmax < tmax)
+        tmax = tzmax;
+
+    *distance = tmin < tmax ? tmin : tmax;
+    *point = vec3_add (ray.origin, vec3_multiply_scalar (ray.direction, *distance));
+
+    return true;
+}
+
+#define N_OBJECTS 4
+
+typedef bool intersect_function_t (ray3_t, void *, double *, vec3_t *, vec3_t *);
+
+typedef struct object_t {
+
+    intersect_function_t *intersect;
+    void *data;
+
+} object_t;
+
+object_t object_make (intersect_function_t *intersect, void *data) {
+
+    object_t object;
+    object.intersect = intersect;
+    object.data = data;
+    return object;
+}
 
 bool ray_intersect_scene (ray3_t ray, vec3_t *point, vec3_t *normal, material_t *material, double time) {
 
     size_t i;
 
     /* the spheres in the scene */
-    sphere_t spheres[N_SPHERES] = {
-        sphere_make (vec3_make (1 * cos (0.25 * time * M_PI * 2), -0.5, 1 * sin (0.25 * time * M_PI * 2) + 1), 0.1),
-        sphere_make (vec3_make (1 * cos (0.25 * time * M_PI * 2 + M_PI), 0.5, 1 * sin (0.25 * time * M_PI * 2 + M_PI) + 1), 0.1),
-        sphere_make (vec3_make (0, 0, 1), 1)
-    };
+    sphere_t spheres[3];
+    spheres[0] = sphere_make (vec3_make (1 * cos (0.25 * time * M_PI * 2 + M_PI * 1.0/4), -0.5, 1 * sin (0.25 * time * M_PI * 2 + M_PI * 1.0/4) + 1), 0.1);
+    spheres[1] = sphere_make (vec3_make (1 * cos (0.25 * 3.0 / 2 * time * M_PI * 2 + M_PI * 5.0/4), 0.5, 1 * sin (0.25 * 3.0 / 2 * time * M_PI * 2 + M_PI * 5.0/4) + 1), 0.1);
+    spheres[2] = sphere_make (vec3_make (0, 0, 1), 1);
+
+//    mat4_t transform = make_rotation_y (sin (time * M_PI * 2 * 0.25));
+//    box_t box = box_make (vec3_make (-0.7, -0.7, 0.3), vec3_make (0.7, 0.7, 1.7), transform);
+
+    /* floor plane */
+    plane_t plane = plane_make (vec3_make (0, 1, 0), vec3_make (0, -1, 0));
+
+    /* objects on screen */
+    object_t objects[N_OBJECTS];
+    objects[0] = object_make (&ray_intersect_sphere, &spheres[0]);
+    objects[1] = object_make (&ray_intersect_sphere, &spheres[1]);
+    objects[2] = object_make (&ray_intersect_sphere, &spheres[2]);
+    objects[3] = object_make (&ray_intersect_plane,  &plane);
 
     /* materials */
-    material_t materials[N_SPHERES] = {
-        material_make (0, (sin (time * M_PI * 4) + 1) / 2, 0),
+    material_t materials[N_OBJECTS] = {
+        //material_make (0, (sin (time * M_PI * 4) + 1) / 2, 0),
         material_make (0, 1, 0),
-        material_make (1, 0, 0.5)
+        material_make (0, 1, 0),
+        material_make (0.75, 0, 0.125),
+        material_make (0.5, 0, 0.75),
     };
 
     /* the intersections and normals */
-    double distances[N_SPHERES];
-    vec3_t    points[N_SPHERES];
-    vec3_t   normals[N_SPHERES];
-    bool     results[N_SPHERES];
+    double distances[N_OBJECTS];
+    vec3_t    points[N_OBJECTS];
+    vec3_t   normals[N_OBJECTS];
+    bool     results[N_OBJECTS];
 
-    for (i = 0; i < N_SPHERES; i++) {
-        results[i] = ray_intersect_sphere (ray, spheres[i], &distances[i], &points[i], &normals[i]);
+    for (i = 0; i < N_OBJECTS; i++) {
+        results[i] = objects[i].intersect (ray, objects[i].data, &distances[i], &points[i], &normals[i]);
     }
 
     /* calculate closest */
     bool result = false;
     double distance;
-    for (i = 0; i < N_SPHERES; i++) {
+    for (i = 0; i < N_OBJECTS; i++) {
 
         if (results[i]) {
+
+            /* dirty hak */
+            if (i == 3) {
+
+                vec3_t p = points[i];
+                int x = p.x * 2;
+                int y = p.z * 2;
+                int s = x + y;
+                while (s < 0)
+                    s += 2;
+                s %= 2;
+                int f = 0;
+                if (p.x < 0) f = !f;
+                if (p.y < 0) f = !f;
+                materials[i].reflectance *= s == f;
+            }
 
             if (result) {
 
@@ -322,7 +586,9 @@ bool ray_cast (ray3_t ray, double time) {
             return rand_bool (material.emittance);
 
     } else
-        return false;
+        //return false;
+        //return rand_bool (0.075);
+        return rand_bool (vec3_dot (ray.direction, vec3_unit (vec3_make (1, -1, 0))) * 0.125 + 0.125);
 }
 
 void callback (display_t *display,
@@ -342,9 +608,10 @@ void callback (display_t *display,
     */
 
     /* path tracing */
+    double time = (display->i_electron + i_electron) * SECONDS_PER_ELECTRON;
 
     /* randomly sample a point on the screen */
-    const double eye_z = -1;
+    const double eye_z = 2 * cos (time * M_PI * 2 / 8) - 3;
     double ratio = app->display.width / (double) app->display.height;
 
     /* normalized device coordinates */
@@ -353,7 +620,7 @@ void callback (display_t *display,
     
     /* cast a ray from the eye to the point on screen */
     ray3_t ray = ray3_make (vec3_make (0, 0, eye_z), vec3_make (x, y, 0));
-    app->display.gun_enabled = ray_cast (ray, (display->i_electron + i_electron) * SECONDS_PER_ELECTRON);
+    app->display.gun_enabled = ray_cast (ray, time);
 
     /* convert to screen coordinates */
     app->display.y = (y * app->display.height + app->display.height) / 2;
@@ -369,7 +636,7 @@ int update_size (app_t *app) {
         SDL_DestroyTexture (app->texture);
 
     if (!(app->texture = SDL_CreateTexture (app->renderer,
-                                            SDL_PIXELFORMAT_RGBA8888,
+                                            SDL_PIXELFORMAT_ABGR8888,
                                             SDL_TEXTUREACCESS_STREAMING,
                                             width,
                                             height))) {
@@ -387,6 +654,26 @@ int update_size (app_t *app) {
     app->frame = 0;
 
     return EXIT_FAILURE;
+}
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
+void export_frame (app_t *app) {
+
+    char path[256];
+    sprintf (path, "images/%04d.png", app->frame);
+    printf ("Writing image to %s (t = %lf)\n", path, (double) app->frame / FPS);
+    if (stbi_write_png (path,
+                        app->display.width,
+                        app->display.height,
+                        4,
+                        app->display.buffer_output,
+                        4 * app->display.width) == 0) {
+
+        fprintf (stderr, "Failed to write image to %s\n", path);
+        exit (EXIT_FAILURE);
+    }
 }
 
 int main (int argc, char **argv) {
@@ -466,7 +753,10 @@ int main (int argc, char **argv) {
         /* render the next image */
         display_process (&app.display, REALTIME ? SDL_GetTicks () / 1000.0 - app.time_init
                                                 : (double) app.frame / FPS);
-        app.frame++;
+
+        /* export the frame */
+        if (EXPORT)
+            export_frame (&app);
 
         /* copy the rendered image to texture memory */
         SDL_UpdateTexture (app.texture,
@@ -478,6 +768,9 @@ int main (int argc, char **argv) {
         SDL_SetRenderTarget (app.renderer, NULL);
         SDL_RenderCopy (app.renderer, app.texture, NULL, NULL);
         SDL_RenderPresent (app.renderer);
+
+        /* keep track of the frame we are on */
+        app.frame++;
     }
 quit:
 
