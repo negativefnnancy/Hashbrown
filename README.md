@@ -3,6 +3,10 @@
 A fantasy console! Codename: Hashbrown!
 (I say fantasy, though I intend to build a real one at some point!)
 
+![](demo.gif)
+
+Path tracing on a simulated vector display!
+
 There's not much to see here yet, but here are some fun ideas:
 
 internal specs:
