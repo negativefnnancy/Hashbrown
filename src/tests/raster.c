@@ -12,12 +12,14 @@
 
 #include <hashbrown/display/display.h>
 
-#define WIDTH (480*2)
-#define HEIGHT (360*2)
+#define WIDTH 480
+#define HEIGHT 360
 
 #define REALTIME false
 #define FPS 60 /* non real time */
-#define EXPORT false /* export all the frames to "images/xxxx.png" */
+#define EXPORT true /* export all the frames to "images/xxxx.png" */
+
+#define LINE_SPEED 100000 /* normalized device units per second */
 
 /* TODO consolodate this demo with the display.c demo */
 
@@ -36,6 +38,9 @@ typedef struct app_t {
 
     /* frame counter */
     unsigned long int frame;
+
+    /* scanlines */
+    double x, y, dx, dy;
 
 } app_t;
 
@@ -303,12 +308,17 @@ vec3_t vec3_direction (vec3_t origin, vec3_t target) {
     return vec3_unit (vec3_subtract (target, origin));
 }
 
-ray3_t ray3_make (vec3_t origin, vec3_t target) {
+ray3_t ray3_make_direction (vec3_t origin, vec3_t direction) {
 
     ray3_t ray;
     ray.origin    = origin;
-    ray.direction = vec3_direction (origin, target);
+    ray.direction = direction;
     return ray;
+}
+
+ray3_t ray3_make (vec3_t origin, vec3_t target) {
+
+    return ray3_make_direction (origin, vec3_direction (origin, target));
 }
 
 extern double noise ();
@@ -559,7 +569,7 @@ vec3_t reflect (vec3_t normal, vec3_t incoming_direction, double scattering) {
     return vec3_interpolate (reflection_specular, reflection_diffuse, scattering);
 }
 
-bool ray_cast (ray3_t ray, double time) {
+double ray_cast (ray3_t ray, double time) {
 
     /*
     reflect (vec3_unit (vec3_make (0, -1, 0)),
@@ -575,20 +585,137 @@ bool ray_cast (ray3_t ray, double time) {
 
         if (material.reflectance) {
 
-            ray3_t reflection = ray3_make (point,
-                                           reflect (normal,
-                                                    ray.direction,
-                                                    material.scattering));
-            return ray_cast (reflection, time) && rand_bool (material.reflectance);
+            ray3_t reflection = ray3_make_direction (point,
+                                                     reflect (normal,
+                                                              ray.direction,
+                                                              material.scattering));
+            return ray_cast (reflection, time) * material.reflectance;
+            //return material.reflectance * vec3_dot (reflection.direction, vec3_make (1, 0, 0));
             /* TODO max recursion */
 
         } else /* TODO proper combine probabilities */
-            return rand_bool (material.emittance);
+            return material.emittance;
 
     } else
-        //return false;
-        //return rand_bool (0.075);
-        return rand_bool (vec3_dot (ray.direction, vec3_unit (vec3_make (1, -1, 0))) * 0.125 + 0.125);
+        return vec3_dot (ray.direction, vec3_unit (vec3_make (1, -1, 0))) * 0.125 + 0.125;
+}
+
+void sample_path (app_t *app, double time, double *x, double *y) {
+
+    double ratio = app->display.width / (double) app->display.height;
+
+    ///* randomly sample a point on the screen */
+    ///* normalized device coordinates */
+    //*x = (noise () * 2 - 1) * ratio;
+    //*y = noise () * 2 - 1;
+
+    /* bouncing scanlines */
+    /*
+    *x = app->x;
+    *y = app->y;
+    app->x += app->dx * SECONDS_PER_ELECTRON;
+    app->y += app->dy * SECONDS_PER_ELECTRON;
+
+    while (true) {
+
+        const double eps = 0.000001;
+
+        if (app->x < -ratio - eps) {
+
+            app->x -= 2 * (app->x + ratio);
+            app->dx *= -1;
+        }
+        else if (app->y < -1 - eps) {
+
+            app->y -= 2 * (app->y + 1);
+            app->dy *= -1;
+        }
+        else if (app->x > ratio + eps) {
+
+            app->x += 2 * (ratio - app->x);
+            app->dx *= -1;
+        }
+        else if (app->y > 1 + eps) {
+
+            app->y += 2 * (1 - app->y);
+            app->dy *= -1;
+        }
+        else break;
+    }
+    */
+
+    /* standard scanlines */
+    /*
+    *x = app->x;
+    *y = app->y;
+    app->x += app->dx * SECONDS_PER_ELECTRON;
+    app->y += app->dy * SECONDS_PER_ELECTRON;
+
+    while (true) {
+
+        const double eps = 0.000001;
+
+        if (app->x > ratio + eps) {
+
+            app->x -= 2 * ratio;
+            app->y += 0.01;
+        }
+        else if (app->y > 1 + eps) {
+
+            app->y -= 2;
+        }
+        else break;
+    }
+    */
+
+    /* random bounce */
+    *x = app->x;
+    *y = app->y;
+    app->x += app->dx * SECONDS_PER_ELECTRON;
+    app->y += app->dy * SECONDS_PER_ELECTRON;
+
+    while (true) {
+
+        const double eps = 0.000001;
+
+        if (app->x < -ratio - eps) {
+
+            app->x -= 2 * (app->x + ratio);
+            app->dx = noise () * 2;
+            app->dy = noise () * 2 - 1;
+            double l = sqrt (app->dx * app->dx + app->dy * app->dy);
+            app->dx *= LINE_SPEED / l;
+            app->dy *= LINE_SPEED / l;
+        }
+        else if (app->y < -1 - eps) {
+
+            app->y -= 2 * (app->y + 1);
+            app->dx = noise () * 2 - 1;
+            app->dy = noise () * 2;
+            double l = sqrt (app->dx * app->dx + app->dy * app->dy);
+            app->dx *= LINE_SPEED / l;
+            app->dy *= LINE_SPEED / l;
+        }
+        else if (app->x > ratio + eps) {
+
+            app->x += 2 * (ratio - app->x);
+            app->dx = noise () * 2 - 2;
+            app->dy = noise () * 2 - 1;
+            double l = sqrt (app->dx * app->dx + app->dy * app->dy);
+            app->dx *= LINE_SPEED / l;
+            app->dy *= LINE_SPEED / l;
+        }
+        else if (app->y > 1 + eps) {
+
+            app->y += 2 * (1 - app->y);
+            app->dx = noise () * 2 - 1;
+            app->dy = noise () * 2 - 2;
+            double l = sqrt (app->dx * app->dx + app->dy * app->dy);
+            app->dx *= LINE_SPEED / l;
+            app->dy *= LINE_SPEED / l;
+        }
+        else break;
+    }
 }
 
 void callback (display_t *display,
@@ -610,17 +737,14 @@ void callback (display_t *display,
     /* path tracing */
     double time = (display->i_electron + i_electron) * SECONDS_PER_ELECTRON;
 
-    /* randomly sample a point on the screen */
-    const double eye_z = 2 * cos (time * M_PI * 2 / 8) - 3;
-    double ratio = app->display.width / (double) app->display.height;
+    /* point on screen to sample */
+    double eye_z = 2 * sin (time * M_PI * 2 / 8) - 3;
+    double x, y;
+    sample_path (app, time, &x, &y);
 
-    /* normalized device coordinates */
-    double x = (noise () * 2 - 1) * ratio;
-    double y = noise () * 2 - 1;
-    
     /* cast a ray from the eye to the point on screen */
     ray3_t ray = ray3_make (vec3_make (0, 0, eye_z), vec3_make (x, y, 0));
-    app->display.gun_enabled = ray_cast (ray, time);
+    app->display.intensity = ray_cast (ray, time);
 
     /* convert to screen coordinates */
     app->display.y = (y * app->display.height + app->display.height) / 2;
@@ -682,6 +806,13 @@ int main (int argc, char **argv) {
     SDL_Event event;
 
     memset (&app, 0, sizeof (app));
+    app.dx = noise () * 2 - 1;
+    app.dy = noise () * 2 - 1;
+    double l = sqrt (app.dx * app.dx + app.dy * app.dy);
+    app.dx *= LINE_SPEED / l;
+    app.dy *= LINE_SPEED / l;
+    //app.dx = LINE_SPEED;
+    //app.dy = 0;
 
     /* initialize SDL */
     if (SDL_Init (SDL_INIT_VIDEO) < 0) {

@@ -78,7 +78,7 @@ void callback (display_t *display,
     app->display.y = (sin (app->phase_y * M_PI * 2) * app->display.height + app->display.height) / 2;
     app->phase_x += frequency_x * SECONDS_PER_ELECTRON;
     app->phase_y += frequency_y * SECONDS_PER_ELECTRON;
-    app->display.gun_enabled = true;
+    app->display.intensity = 1;
 }
 
 int update_size (app_t *app) {

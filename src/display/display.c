@@ -37,6 +37,7 @@ void display_init (display_t *display,
     display->data = data;
     display->power_supply_in  = 1;
     display->power_supply_out = 1;
+    display->intensity = 1;
     generate_kernel (display);
 }
 
@@ -91,7 +92,9 @@ void display_emit_electron (display_t *display, double time) {
 
     /* phosphor */
     {
-        double intensity = INTENSITY_PER_ELECTRON * display->power_supply_out;
+        double intensity = INTENSITY_PER_ELECTRON
+                         * fmin (fmax (display->intensity, 0), 1)
+                         * display->power_supply_out;
         size_t i_phosphor = (int) x + (int) y * display->width;
         display->buffer_phosphor[i_phosphor]
             = get_phosphor_pixel (display, i_phosphor, time) + intensity;
@@ -209,11 +212,10 @@ void display_process (display_t *display, double time) {
         display->callback (display, i, delta_electrons, display->data);
 
         /* emit the electron */
-        if (display->gun_enabled)
-            display_emit_electron (display,
-                                   time
-                                   - (delta_electrons - i)
-                                   / (double) ELECTRONS_PER_SECOND);
+        display_emit_electron (display,
+                               time
+                               - (delta_electrons - i)
+                               / (double) ELECTRONS_PER_SECOND);
     }
 
     /* apply the bloom filter */
